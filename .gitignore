@@ -1,0 +1,6 @@
+node_modules/
+dist/
+dist-nested/
+*.log
+.vite/
+screens/tmp/
