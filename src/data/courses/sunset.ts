@@ -103,5 +103,74 @@ export const SUNSET: CourseSpec = {
   ],
   par: { fast: 22, express: 30, slow: 60 },
   attract: [-2, 0],
-  decor: [],
+  decor: [
+    // Sky and far coast.
+    { kind: 'clouds', x: -250, variant: 14 },
+    { kind: 'hills', x: 250, z: -640, variant: 5 },
+    { kind: 'pier', x: 120, w: 170, z: -150, y: -1.6 },
+    { kind: 'ferris', x: 235, z: -160, s: 15, y: -1 },
+    { kind: 'boat', x: 60, z: -230 },
+    { kind: 'boat', x: 330, z: -280, color: '#f3c01c' },
+    { kind: 'gull', x: 70, y: 15, z: -26 },
+    { kind: 'gull', x: 215, y: 17, z: -34 },
+
+    { kind: 'townfill', x: 10, w: 320, variant: 11 },
+    { kind: 'frontfill', x: -30, w: 340, variant: 5 },
+
+    // A: the warehouse.
+    { kind: 'warehouse', x: -46, w: 54 },
+    { kind: 'crates', x: 1.5, z: -3.6, variant: 5 },
+    { kind: 'crates', x: 4, z: -3.8, variant: 3 },
+    { kind: 'sign', x: 9.5, w: 2.4, h: 1.3, y: 1.1, color: 'white', text: 'DAYS SINCE LAST|INCIDENT: 0', small: 'Updated hourly' },
+    { kind: 'sign', x: 17, w: 3.2, h: 1.1, y: 1.4, color: 'dark', text: 'WE PACK IT.|YOU EXPLAIN IT.' },
+    { kind: 'person', x: -1, z: -3.6, color: '#d8242b', variant: 1, rot: 0.6 },
+    { kind: 'palm', x: 12, z: -9, h: 9, variant: 1 },
+    { kind: 'light', x: 22 },
+
+    // B: the sensible neighbourhood.
+    { kind: 'apartment', x: 20, w: 16, h: 14, z: -24, color: '#f0dcc4' },
+    { kind: 'shop', x: 36, w: 13, h: 6.5, variant: 0, text: 'WRENCH & RELAX' },
+    { kind: 'sign', x: 44, w: 3.2, h: 1.3, y: 1.3, color: 'yellow', text: 'DIP AHEAD', small: 'The boxes have opinions' },
+    { kind: 'palm', x: 49, z: -8.5, h: 8, variant: -1 },
+    { kind: 'shop', x: 58, w: 14, h: 7.5, variant: 1, text: 'SPIN CYCLE LAUNDRY' },
+    { kind: 'apartment', x: 60, w: 18, h: 17, z: -30, color: '#e3eef0' },
+    { kind: 'light', x: 66 },
+    { kind: 'shop', x: 79, w: 12, h: 6, variant: 3, text: 'TACO DEPOT' },
+    { kind: 'palm', x: 86, z: -9, h: 9.5, variant: 1 },
+    { kind: 'apartment', x: 96, w: 14, h: 12, z: -24, color: '#f6d6c8' },
+    { kind: 'shop', x: 98, w: 11, h: 6.5, variant: 2, text: 'SURF & TURF' },
+
+    // C: the choice.
+    { kind: 'sign', x: 104, w: 3.4, h: 1.9, y: 1.4, color: 'yellow', text: 'SHORTCUT*', small: '*Measured emotionally.' },
+    { kind: 'gull', x: 104, y: 3.35, z: -4.3, variant: 1 },
+    { kind: 'sign', x: 116, w: 3.0, h: 1.6, y: 1.9, color: 'white', text: '~AUTHORIZED|SHORTCUT', small: 'Authorization pending.' },
+    { kind: 'cones', x: 111, variant: 3 },
+    { kind: 'light', x: 124 },
+    { kind: 'under', x: 136.5, w: 42, y: 4.2, text: 'PARCEL MART', color: '#e9c7a0' },
+    { kind: 'sign', x: 141.5, w: 2.6, h: 1.2, y: 0.7, color: 'blue', text: 'SERVICE LANE|5 MPH', small: 'The boxes enforce it.' },
+    { kind: 'sign', x: 172, w: 2.6, h: 1.2, y: 0.7, base: 4.35, color: 'red', text: 'EDGE OF ROOF', small: 'Suggestions welcome' },
+
+    // D: the Sunset Motel pool terrace.
+    { kind: 'motel', x: 176, w: 60, z: -10.5, base: 0 },
+    { kind: 'under', x: 178.6, w: 44, y: 3.4, color: '#f5d7b8', variant: 1 },
+    { kind: 'pooldeck', x: 178.6, w: 44, y: 4.2 },
+    { kind: 'floatie', x: 185.5, y: 4.0, z: -1.2, s: 1 },
+    { kind: 'railing', x: 193, w: 29, y: 4.2, z: 2.75, color: '#1f8fa0' },
+    { kind: 'sign', x: 199, w: 2.8, h: 1.3, y: 1.1, base: 4.25, z: -4.2, color: 'white', text: 'NO DIVING.', small: 'This includes vehicles.' },
+    { kind: 'palm', x: 181, z: -7.2, h: 7, variant: 1, base: 4.2 },
+    { kind: 'palm', x: 214, z: -7.2, h: 8, variant: -1, base: 4.2 },
+    { kind: 'person', x: 208, base: 4.25, z: -5.4, color: '#2aa7c9', rot: 0.9 },
+
+    // E: the final mile.
+    { kind: 'cones', x: 234, variant: 2, z: -4.2 },
+    { kind: 'palm', x: 244, z: -8, h: 9, variant: 1 },
+    { kind: 'sign', x: 262, w: 3.4, h: 1.6, y: 1.3, color: 'green', text: 'DELIVERIES →|REAR ENTRANCE', small: 'Please do not use the pool again.' },
+    { kind: 'light', x: 270 },
+    { kind: 'bay', x: 286, w: 15 },
+    { kind: 'handtruck', x: 300, z: -3.2 },
+    { kind: 'person', x: 296.5, z: -3.6, color: '#1f7f8f' },
+    { kind: 'door', x: 304 },
+    { kind: 'palm', x: 290, z: -9, h: 8.5, variant: -1 },
+    { kind: 'apartment', x: 260, w: 20, h: 15, z: -32, color: '#f2e2cc' },
+  ],
 };

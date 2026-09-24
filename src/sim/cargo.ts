@@ -1,6 +1,6 @@
 import type { CargoSpec, CargoState, Rect } from './types';
 import type { Slot } from '../data/cargo';
-import { type Body, type Collider, type R, type World, DT, GROUPS, clamp, rotate, wrapAngle } from './physics';
+import { type Body, type Collider, type R, type World, DT, GROUPS, clamp, wrapAngle } from './physics';
 import type { VehicleSim } from './vehicle';
 
 export interface CargoEvent {
@@ -25,8 +25,9 @@ export class CargoItem {
   condition = 1;
   /** 0..1, how hard the strap is working right now (visual + audio cue). */
   tension = 0;
-  private overload = 0;
-  private impactCooldown = 0;
+  overload = 0;
+  impactCooldown = 0;
+  strainLatched = false;
   pickup: Pickup | null = null;
   recoveredOnce = false;
   lastTouchedDeck = 0;
@@ -68,7 +69,7 @@ export class CargoSystem {
 
   constructor(
     private rapier: R,
-    private world: World,
+    world: World,
     private vehicle: VehicleSim,
     specs: CargoSpec[],
     slots: Slot[],
@@ -155,7 +156,11 @@ export class CargoSystem {
         }
       } else {
         it.overload = Math.max(0, it.overload - DT * 0.5);
-        if (it.tension > 0.7 && it.overload === 0) this.push('strain', it, it.tension);
+        // One creak per strain episode, not one per physics step.
+        if (it.tension > 0.7 && !it.strainLatched) {
+          it.strainLatched = true;
+          this.push('strain', it, it.tension);
+        } else if (it.tension < 0.3) it.strainLatched = false;
       }
     }
   }
@@ -165,11 +170,7 @@ export class CargoSystem {
     const it = this.byCollider.get(handle);
     if (!it || it.pickup || it.state === 'lost' || it.state === 'delivered') return;
     const dv = (totalForce * DT) / it.spec.mass;
-    if (dv > 2.2) {
-      const p = it.pos;
-      if (it.spec.kind === 'flamingo' || dv > 3.2) this.push('impact', it, dv);
-      void p;
-    }
+    if (dv > 2.2 && (it.spec.kind === 'flamingo' || dv > 3.2)) this.push('impact', it, dv);
     if (it.impactCooldown > 0) return;
     if (dv > it.spec.damageThreshold) {
       it.condition = clamp(it.condition - (dv - it.spec.damageThreshold) * it.spec.damageScale, 0, 1);
@@ -293,5 +294,3 @@ export class CargoSystem {
   }
 }
 
-// Exposed for unit tests.
-export const _rotate = rotate;

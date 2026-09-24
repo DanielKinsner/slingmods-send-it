@@ -1,0 +1,607 @@
+{
+  "sfx/box-thump-3.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "cardboard box bumping against another cardboard box, soft papery knock",
+    "created": "2026-09-24T22:12:17.427Z"
+  },
+  "sfx/box-thump-2.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "heavy cardboard carton landing on metal cargo rack, dull thud with slight rattle",
+    "created": "2026-09-24T22:12:17.454Z"
+  },
+  "sfx/box-thump-1.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "empty cardboard box dropped onto a metal rack, single short hollow thump, close mic",
+    "created": "2026-09-24T22:12:17.555Z"
+  },
+  "sfx/box-scrape.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "cardboard box sliding across rough asphalt, short scrape",
+    "created": "2026-09-24T22:12:18.866Z"
+  },
+  "sfx/strap-creak.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "nylon ratchet strap straining under tension, stretchy creak, subtle",
+    "created": "2026-09-24T22:12:19.057Z"
+  },
+  "sfx/box-tumble.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "several cardboard boxes tumbling onto asphalt road, papery bounces and scrapes",
+    "created": "2026-09-24T22:12:19.256Z"
+  },
+  "sfx/strap-snap.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "nylon cargo strap snapping loose with a springy twang and buckle rattle",
+    "created": "2026-09-24T22:12:20.317Z"
+  },
+  "sfx/splash-big.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "small car plunging into a backyard swimming pool, big splash then bubbling",
+    "created": "2026-09-24T22:12:20.662Z"
+  },
+  "sfx/splash-small.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "cardboard box plopping into a swimming pool, small splash",
+    "created": "2026-09-24T22:12:20.928Z"
+  },
+  "sfx/squeak-1.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "rubber squeaky toy squeezed once, short high squeak",
+    "created": "2026-09-24T22:12:21.798Z"
+  },
+  "sfx/squeak-2.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "inflatable pool flamingo squeaking as it is squished, comedic rubbery squeak",
+    "created": "2026-09-24T22:12:22.226Z"
+  },
+  "sfx/squeak-3.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "double squeak from a rubber toy, surprised sounding",
+    "created": "2026-09-24T22:12:22.635Z"
+  },
+  "sfx/land-hard.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "small three-wheel vehicle landing hard after a jump, suspension thud and spring clunk on asphalt",
+    "created": "2026-09-24T22:12:23.654Z"
+  },
+  "sfx/land-soft.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "small vehicle suspension compressing smoothly after a small bump, soft thunk",
+    "created": "2026-09-24T22:12:23.874Z"
+  },
+  "sfx/tire-chirp.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "short tire chirp on dry asphalt from hard braking",
+    "created": "2026-09-24T22:12:24.053Z"
+  },
+  "sfx/pickup.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "quick cartoon whoosh with a soft pop, item being grabbed",
+    "created": "2026-09-24T22:12:25.108Z"
+  },
+  "sfx/crash.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "small plastic-bodied vehicle tipping over onto pavement, comedic clatter and crunch, not violent",
+    "created": "2026-09-24T22:12:25.127Z"
+  },
+  "sfx/bell.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "hotel front desk service bell, single ding",
+    "created": "2026-09-24T22:12:25.452Z"
+  },
+  "sfx/receipt.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "thermal receipt printer printing a short receipt",
+    "created": "2026-09-24T22:12:26.629Z"
+  },
+  "sfx/stamp.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "rubber stamp thumped firmly onto paper on a wooden desk",
+    "created": "2026-09-24T22:12:26.671Z"
+  },
+  "sfx/register.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "small cash register cha-ching",
+    "created": "2026-09-24T22:12:26.835Z"
+  },
+  "sfx/gull.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "single seagull call near a beach",
+    "created": "2026-09-24T22:12:27.982Z"
+  },
+  "sfx/sad-horn.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "short sad tuba, two descending notes, comedic disappointment",
+    "created": "2026-09-24T22:12:28.086Z"
+  },
+  "sfx/cheer.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "small group of people at a motel pool party cheering and whooping briefly",
+    "created": "2026-09-24T22:12:28.379Z"
+  },
+  "sfx/radio-on.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "walkie talkie push to talk click with a short burst of static",
+    "created": "2026-09-24T22:12:29.390Z"
+  },
+  "sfx/radio-off.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "walkie talkie release click, short squelch tail",
+    "created": "2026-09-24T22:12:29.717Z"
+  },
+  "sfx/waves.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "gentle ocean waves on a sandy beach, calm, seamless loop",
+    "created": "2026-09-24T22:12:30.972Z"
+  },
+  "sfx/boardwalk.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "tires rolling over wooden boardwalk planks, rhythmic clunks, continuous",
+    "created": "2026-09-24T22:12:31.127Z"
+  },
+  "sfx/sprinkler.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "suburban lawn sprinkler ticking, birds chirping, quiet afternoon",
+    "created": "2026-09-24T22:12:31.912Z"
+  },
+  "sfx/trampoline.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "trampoline springs boing",
+    "created": "2026-09-24T22:12:32.266Z"
+  },
+  "sfx/wind-whoosh.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "short rush of wind passing by, airborne whoosh",
+    "created": "2026-09-24T22:12:32.621Z"
+  },
+  "sfx/honk.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "small vehicle horn, two short friendly toots",
+    "created": "2026-09-24T22:12:33.290Z"
+  },
+  "sfx/drum-hit.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "single punchy rimshot ba-dum-tss drum sting",
+    "created": "2026-09-24T22:12:33.574Z"
+  },
+  "sfx/crowd-aww.mp3": {
+    "source": "ElevenLabs sound-generation",
+    "prompt": "small crowd going aww in sympathy, brief",
+    "created": "2026-09-24T22:12:33.899Z"
+  },
+  "vo/d01.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Nothing fragile. Except the schedule.",
+    "created": "2026-09-24T22:12:34.947Z"
+  },
+  "vo/d02.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Route approved by someone who has not seen it.",
+    "created": "2026-09-24T22:12:34.986Z"
+  },
+  "vo/d03.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Customer requested a contactless delivery. Try the door first.",
+    "created": "2026-09-24T22:12:35.228Z"
+  },
+  "vo/d34.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Reminder: the shortcut is optional. So is your dignity.",
+    "created": "2026-09-24T22:12:36.081Z"
+  },
+  "vo/d35.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Your load has been rated: probably fine.",
+    "created": "2026-09-24T22:12:36.260Z"
+  },
+  "vo/d33.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Dispatch here. Please drive like the boxes are watching. They are.",
+    "created": "2026-09-24T22:12:36.264Z"
+  },
+  "vo/d04.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Package has selected a new address.",
+    "created": "2026-09-24T22:12:37.016Z"
+  },
+  "vo/d05.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Your shipment is exploring its options.",
+    "created": "2026-09-24T22:12:37.207Z"
+  },
+  "vo/d06.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "One parcel has declined the itinerary.",
+    "created": "2026-09-24T22:12:37.313Z"
+  },
+  "vo/d37.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "We are now a two-stop delivery.",
+    "created": "2026-09-24T22:12:38.235Z"
+  },
+  "vo/d36.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "A parcel has left the vehicle. It did not say goodbye.",
+    "created": "2026-09-24T22:12:38.378Z"
+  },
+  "vo/d07.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Local pickup. Extremely local.",
+    "created": "2026-09-24T22:12:38.380Z"
+  },
+  "vo/d08.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Reunited, and slightly less square.",
+    "created": "2026-09-24T22:12:39.164Z"
+  },
+  "vo/d10.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "That strap would like a word.",
+    "created": "2026-09-24T22:12:39.338Z"
+  },
+  "vo/d09.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "We are calling that a distribution exercise.",
+    "created": "2026-09-24T22:12:39.474Z"
+  },
+  "vo/d11.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The cargo has started leaning into its career.",
+    "created": "2026-09-24T22:12:40.253Z"
+  },
+  "vo/d12.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Load security is now a philosophical question.",
+    "created": "2026-09-24T22:12:40.307Z"
+  },
+  "vo/d38.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Strap has clocked out early.",
+    "created": "2026-09-24T22:12:40.475Z"
+  },
+  "vo/d13.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Express shipping.",
+    "created": "2026-09-24T22:12:41.221Z"
+  },
+  "vo/d14.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "That was either skill or a very expensive coincidence.",
+    "created": "2026-09-24T22:12:41.507Z"
+  },
+  "vo/d15.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The road is going to take this personally.",
+    "created": "2026-09-24T22:12:41.526Z"
+  },
+  "vo/d16.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Contents may have shifted. Confidence has not.",
+    "created": "2026-09-24T22:12:42.221Z"
+  },
+  "vo/d17.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Suspiciously professional.",
+    "created": "2026-09-24T22:12:42.482Z"
+  },
+  "vo/d18.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "This side up has been renegotiated.",
+    "created": "2026-09-24T22:12:42.591Z"
+  },
+  "vo/d19.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Full rotation. Partial explanation.",
+    "created": "2026-09-24T22:12:43.306Z"
+  },
+  "vo/d20.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Your order is now marine freight.",
+    "created": "2026-09-24T22:12:43.527Z"
+  },
+  "vo/d39.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "For the record, the boxes did not consent to that.",
+    "created": "2026-09-24T22:12:43.629Z"
+  },
+  "vo/d21.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Delivery attempted. Swimming achieved.",
+    "created": "2026-09-24T22:12:44.396Z"
+  },
+  "vo/d22.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The pool is not an approved receiving department.",
+    "created": "2026-09-24T22:12:44.670Z"
+  },
+  "vo/d40.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Please do not use the pool again. That was in the note.",
+    "created": "2026-09-24T22:12:44.813Z"
+  },
+  "vo/d23.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The underside looks great, for what that is worth.",
+    "created": "2026-09-24T22:12:45.519Z"
+  },
+  "vo/d24.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Please return the vehicle to its original orientation.",
+    "created": "2026-09-24T22:12:45.802Z"
+  },
+  "vo/d41.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Driver has entered horizontal mode. Stand by.",
+    "created": "2026-09-24T22:12:45.962Z"
+  },
+  "vo/d42.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The vehicle has chosen to live here now.",
+    "created": "2026-09-24T22:12:46.469Z"
+  },
+  "vo/d43.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Technically parked. Not technically delivered.",
+    "created": "2026-09-24T22:12:46.774Z"
+  },
+  "vo/d25.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Cargo optional. Paycheck also optional.",
+    "created": "2026-09-24T22:12:47.094Z"
+  },
+  "vo/d26.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Excellent vehicle delivery. Wrong vehicle delivery.",
+    "created": "2026-09-24T22:12:47.472Z"
+  },
+  "vo/d27.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "You have passed the point. Literally.",
+    "created": "2026-09-24T22:12:47.885Z"
+  },
+  "vo/d28.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The brake pedal has requested a meeting.",
+    "created": "2026-09-24T22:12:48.145Z"
+  },
+  "vo/d29.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The flamingo has concerns.",
+    "created": "2026-09-24T22:12:48.388Z"
+  },
+  "vo/d30.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "One squeak means fine. Probably.",
+    "created": "2026-09-24T22:12:48.927Z"
+  },
+  "vo/d31.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The flamingo is pursuing independent work.",
+    "created": "2026-09-24T22:12:49.253Z"
+  },
+  "vo/d44.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Flamingo has been released into the wild. It will be fine. It is plastic.",
+    "created": "2026-09-24T22:12:49.826Z"
+  },
+  "vo/d32.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "You appear to be shipping in installments.",
+    "created": "2026-09-24T22:12:49.865Z"
+  },
+  "vo/d45.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Dispatch did not see that. Dispatch would like to un-see that.",
+    "created": "2026-09-24T22:12:50.590Z"
+  },
+  "vo/d46.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Altitude is not a delivery metric. But go on.",
+    "created": "2026-09-24T22:12:50.853Z"
+  },
+  "vo/d47.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Rooftop access confirmed. Liability not confirmed.",
+    "created": "2026-09-24T22:12:51.100Z"
+  },
+  "vo/d48.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Ah. The scenic route. Vertically.",
+    "created": "2026-09-24T22:12:51.721Z"
+  },
+  "vo/d49.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Helmet: working as intended.",
+    "created": "2026-09-24T22:12:51.878Z"
+  },
+  "vo/d50.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Driver is fine. Driver is filing a report about the driver.",
+    "created": "2026-09-24T22:12:52.367Z"
+  },
+  "vo/d51.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Same route. Same boxes. Brand new optimism.",
+    "created": "2026-09-24T22:12:52.953Z"
+  },
+  "vo/d52.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Dispatch admires your commitment to the bit.",
+    "created": "2026-09-24T22:12:52.966Z"
+  },
+  "vo/d53.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The fragile one. Of course it was the fragile one.",
+    "created": "2026-09-24T22:12:53.537Z"
+  },
+  "vo/d54.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Front wheel is taking a personal day.",
+    "created": "2026-09-24T22:12:54.126Z"
+  },
+  "vo/p01.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Pier Pressure. Mind the gulls. They are unionized.",
+    "created": "2026-09-24T22:12:54.192Z"
+  },
+  "vo/p02.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "You are now on the snack stand roof. The snack stand has not been informed.",
+    "created": "2026-09-24T22:12:54.678Z"
+  },
+  "vo/p03.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The ocean is not a receiving department either. We checked.",
+    "created": "2026-09-24T22:12:55.128Z"
+  },
+  "vo/h01.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "HOA No. Keep it under a reasonable speed. They will not tell you what that is.",
+    "created": "2026-09-24T22:12:55.593Z"
+  },
+  "vo/h02.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "You are driving on a garage. A complaint has been drafted.",
+    "created": "2026-09-24T22:12:55.720Z"
+  },
+  "vo/h03.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "That is somebody’s koi pond. Was.",
+    "created": "2026-09-24T22:12:56.243Z"
+  },
+  "vo/r02.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "All accounted for. Nobody act surprised.",
+    "created": "2026-09-24T22:12:56.728Z"
+  },
+  "vo/r01.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Remarkably, the contents and the packaging agree.",
+    "created": "2026-09-24T22:12:56.771Z"
+  },
+  "vo/r03.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Everything arrived. Some of it in a new shape.",
+    "created": "2026-09-24T22:12:57.225Z"
+  },
+  "vo/r05.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Three out of five. Technically a majority.",
+    "created": "2026-09-24T22:12:57.897Z"
+  },
+  "vo/r04.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Most of your order is here. Emotionally, all of it.",
+    "created": "2026-09-24T22:12:57.943Z"
+  },
+  "vo/r06.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "One parcel is taking the scenic route.",
+    "created": "2026-09-24T22:12:58.256Z"
+  },
+  "vo/r08.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Delivery completed in spirit only.",
+    "created": "2026-09-24T22:12:58.887Z"
+  },
+  "vo/r07.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Four parcels and a compelling explanation.",
+    "created": "2026-09-24T22:12:58.982Z"
+  },
+  "vo/r09.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "The tracking number is now more of a suggestion.",
+    "created": "2026-09-24T22:12:59.228Z"
+  },
+  "vo/r10.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Nobody ordered this. Five stars.",
+    "created": "2026-09-24T22:12:59.975Z"
+  },
+  "vo/r11.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Flamingo received. Procurement confused.",
+    "created": "2026-09-24T22:13:00.012Z"
+  },
+  "vo/r12.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "New personal best. Please do not update company policy.",
+    "created": "2026-09-24T22:13:00.275Z"
+  },
+  "vo/r13.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Faster than last time. We will leave it at that.",
+    "created": "2026-09-24T22:13:00.973Z"
+  },
+  "vo/r14.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "An uneventful delivery. In this economy.",
+    "created": "2026-09-24T22:13:01.137Z"
+  },
+  "vo/r15.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Signed for by: the deep end.",
+    "created": "2026-09-24T22:13:01.358Z"
+  },
+  "vo/r16.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Delivery status: pending an explanation.",
+    "created": "2026-09-24T22:13:02.092Z"
+  },
+  "vo/r17.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Recipient was not home. Neither, briefly, was the vehicle.",
+    "created": "2026-09-24T22:13:02.240Z"
+  },
+  "vo/b01.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "SlingMods dispatch. Your parts are out for delivery. Probably.",
+    "created": "2026-09-24T22:13:02.762Z"
+  },
+  "vo/b02.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Send it.",
+    "created": "2026-09-24T22:13:03.041Z"
+  },
+  "vo/b03.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Signed, sealed, mostly delivered.",
+    "created": "2026-09-24T22:13:03.292Z"
+  },
+  "vo/b04.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Package received. Receipt printing. Nobody look at the receipt.",
+    "created": "2026-09-24T22:13:04.079Z"
+  },
+  "vo/b05.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Dispatch update: not enough boxes left to pass. You may continue for practice. And for sport.",
+    "created": "2026-09-24T22:13:04.260Z"
+  },
+  "vo/b06.mp3": {
+    "source": "ElevenLabs TTS (Bill)",
+    "text": "Welcome to the loading dock. Please choose your mistakes carefully.",
+    "created": "2026-09-24T22:13:04.588Z"
+  },
+  "music/run-loop.mp3": {
+    "source": "ElevenLabs music",
+    "prompt": "Upbeat instrumental surf rock garage groove for a comedic arcade driving game, twangy reverb guitar, punchy drums, walking bass, playful organ stabs, sunny coastal vibe, 128 bpm, loopable, no vocals",
+    "created": "2026-09-24T22:13:15.455Z"
+  },
+  "music/garage-loop.mp3": {
+    "source": "ElevenLabs music",
+    "prompt": "Relaxed lo-fi funk loop for a workshop loading dock menu screen, muted guitar, electric piano, light brushed drums, warm and a little cheeky, 92 bpm, loopable, no vocals",
+    "created": "2026-09-24T22:13:23.309Z"
+  },
+  "music/results-sting.mp3": {
+    "source": "ElevenLabs music",
+    "prompt": "Short triumphant but slightly goofy brass fanfare sting for a delivery completed screen, ends cleanly, no vocals",
+    "created": "2026-09-24T22:13:26.779Z"
+  },
+  "music/fail-sting.mp3": {
+    "source": "ElevenLabs music",
+    "prompt": "Short comedic failure sting, deflating slide whistle into a single muted trombone note, no vocals",
+    "created": "2026-09-24T22:13:31.039Z"
+  }
+}

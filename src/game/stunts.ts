@@ -57,7 +57,6 @@ export class StuntTracker {
   private cleanTouch = false;
   private usedJumps: number[] = [];
   private wheelieTime = 0;
-  private wheelieX0 = 0;
   private wheeliePts = 0;
   private usedZones = new Set<string>();
   private dead = false;
@@ -153,7 +152,6 @@ export class StuntTracker {
   private trackWheelie(f: StuntFrame, dt: number, out: StuntEvent[]) {
     const wheelie = f.rear && !f.front && f.forwardSpeed > 3 && f.angle > 0.12 && f.angle < 1.3;
     if (wheelie) {
-      if (this.wheelieTime === 0) this.wheelieX0 = f.x;
       this.wheelieTime += dt;
     } else {
       this.endWheelie(out, f.front);

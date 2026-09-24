@@ -120,6 +120,8 @@ export interface DecorItem {
   small?: string;
   color?: string;
   variant?: number;
+  /** Explicit base height (otherwise sampled from the main road). */
+  base?: number;
 }
 
 export interface CourseSpec {

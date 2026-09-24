@@ -108,7 +108,6 @@ export class Run {
   private airTime = 0;
   private prevVy = 0;
   private impossibleSent = false;
-  private lastSurface: SurfaceKind | null = null;
   private failTimer = 0;
   learned = { throttle: false, brake: false, pitch: false };
   private throttleHeld = 0;
