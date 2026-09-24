@@ -91,8 +91,8 @@ export function titleScreen(api: ScreenApi): HTMLElement {
       <div class="title-foot">
         <div class="keys-hint">${
           api.isTouch()
-            ? '<span>Right thumb: GAS / BRAKE</span><span>Left thumb: NOSE UP / DOWN</span>'
-            : '<span><kbd>W</kbd>Gas</span><span><kbd>S</kbd>Brake</span><span><kbd>A</kbd><kbd>D</kbd>Nose up / down</span><span><kbd>R</kbd>Retry</span>'
+            ? '<span>Right thumb: GAS / BRAKE</span><span>Left thumb: NOSE UP / DOWN</span><span>In the air: TRICK / TOSS</span>'
+            : '<span><kbd>W</kbd>Gas</span><span><kbd>S</kbd>Brake</span><span><kbd>A</kbd><kbd>D</kbd>Nose up / down</span><span><kbd>Space</kbd>Trick (hold a direction)</span><span><kbd>E</kbd>Toss parcel</span><span><kbd>R</kbd>Retry</span>'
         }</div>
         <div>Fictional arcade physics. Real-world riding rules still apply.</div>
       </div>
