@@ -172,7 +172,7 @@ export const SUNSET: CourseSpec = {
     // C0: the construction zone (new).
     { kind: 'sign', x: 101, w: 3.4, h: 1.7, y: 1.3, color: 'yellow', text: 'ROAD WORK AHEAD', small: 'So is regret.' },
     { kind: 'cones', x: 104, variant: 3 },
-    { kind: 'excavator', x: 115, z: -7 },
+    { kind: 'excavator', x: 115, z: -10.5 },
     { kind: 'sign', x: 121, w: 3.4, h: 1.6, y: 1.3, color: 'white', text: 'DIG SITE', small: 'We lost something down here. Possibly a van.' },
     { kind: 'cones', x: 126, variant: 2 },
     { kind: 'sign', x: 131, w: 3.2, h: 1.4, y: 1.3, color: 'yellow', text: 'RUMBLE STRIPS', small: 'Your cargo will now speak.' },

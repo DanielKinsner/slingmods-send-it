@@ -996,4 +996,21 @@ function touchify(text: string) {
 const game = new Game();
 game.boot();
 (window as unknown as { __sendit: Game }).__sendit = game;
+if (DEBUG_BOT) {
+  // Developer-only: advance the real simulation synchronously with the bot's
+  // gameplay inputs (for evidence capture in throttled/hidden preview panes).
+  (window as unknown as { __advanceTo: (x: number, maxSec?: number) => number }).__advanceTo = (x, maxSec = 120) => {
+    const run = game.run!;
+    const plan = BOT_PLANS[run.course.id][DEBUG_BOT];
+    for (let i = 0; i < maxSec * 120 && run.vehicle.position.x < x && run.phase !== 'finished'; i++) {
+      game.prev = snapshot(run, game.prev);
+      run.step(botInput(run, plan));
+      game.cur = snapshot(run, game.cur);
+      game.handleEvents(run);
+    }
+    // Let the smoothed camera settle on the frozen moment.
+    for (let k = 0; k < 120; k++) game.scene.draw(run, game.prev, game.cur, 1, 1 / 60, { throttle: 1, brake: 0 });
+    return run.vehicle.position.x;
+  };
+}
 void VEHICLES;
