@@ -10,4 +10,4 @@ screens/tmp/
 public/assets/vehicles/**/*.glb
 .vercel/
 
-.vercel
+model-host/**/*.glb

@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "bot": "vite-node scripts/bot.ts",
-    "import-vehicles": "node scripts/import-vehicles.mjs"
+    "import-vehicles": "node scripts/import-vehicles.mjs",
+    "deploy:models": "node scripts/deploy-models.mjs"
   },
   "dependencies": {
     "@dimforge/rapier2d-compat": "^0.20.0",

@@ -2,8 +2,8 @@
 
 _Last updated: 2026-09-24. Public repo: https://github.com/DanielKinsner/slingmods-send-it — the four model
 GLBs (rider + 3 vehicles) are deliberately **not** in Git (purchased/licensed assets; purged from history too).
-On a fresh clone run `npm run import-vehicles` with the Three-Wheel Tour checkout beside it. The live Vercel build
-is deployed from this PC with `vercel deploy --prod` (see "Deploy" below), not from Git, so it keeps the models._
+On a fresh clone run `npm run import-vehicles` with the Three-Wheel Tour checkout beside it for local dev. The live
+game **auto-deploys from `main`** and loads the models from a separate model-host site (see "Deploy" below)._
 
 ## Where it is and how to run it
 
@@ -12,7 +12,7 @@ Project: `C:\Users\SM - Dan\Documents\GitHub\SEND IT\slingmods-send-it`
 ```bash
 npm install
 npm run dev            # http://localhost:5190
-npm test               # 30 rule + physics integration tests
+npm test               # 39 rule + physics integration tests
 npm run build          # static build in dist/ (relative base: works at / or /arcade/send-it/)
 node scripts/serve-nested.mjs 5191   # serves dist/ at http://localhost:5191/arcade/send-it/
 npm run bot -- sunset slingshot safe # headless playtest: course vehicle plan [preset]
@@ -23,30 +23,33 @@ Developer-only URL switches (never on by default): `?inspect=slingshot|ryker|spy
 view), `?bot=safe|shortcut|pool` (bot drives runs with gameplay inputs), `?dtmax=0.5` (catch-up in throttled
 preview panes).
 
-## Deploy (Vercel, from this PC)
+## Deploy (Vercel)
 
-Live: **https://slingmods-send-it.vercel.app** (project `daniel-kinsners-projects/slingmods-send-it`).
+Live game: **https://slingmods-send-it.vercel.app** (project `daniel-kinsners-projects/slingmods-send-it`).
+**Push to `main` → Vercel builds and deploys automatically.** Nothing to run.
 
-```bash
-vercel build --prod --yes          # runs npm run build locally, models included
-vercel deploy --prebuilt --prod --yes
-```
+How the models get there without being in Git: they live on a second, tiny Vercel site —
+**https://slingmods-send-it-models.vercel.app** (project `slingmods-send-it-models`, source in `model-host/`, GLBs
+git-ignored, CORS open, `noindex`). `.env.production` sets `VITE_MODEL_BASE` to that URL, so production builds
+fetch GLBs from there; if that fails the loader falls back to the game's own `assets/` folder (local dev).
+Think of it as proxies on a shared drive: the timeline (game) is in Git, the heavy media (models) sits elsewhere
+and is linked by path.
 
-The Vercel project is **disconnected from GitHub on purpose** (`vercel git disconnect`): a Git-triggered cloud
-build would lack the git-ignored vehicle models and show the "vehicle not loaded" diagnostic. `.vercel/` is
-git-ignored; on another machine run `vercel link` first (and disconnect Git again if it auto-connects).
+Only if the models change: `npm run import-vehicles && npm run deploy:models` (from the PC where
+`model-host/.vercel` is linked; on another machine `vercel link` inside `model-host/` first).
+Manual fallback for the game itself: `vercel build --prod --yes && vercel deploy --prebuilt --prod --yes`.
 
 ## Verified this session
 
-- **Tests:** `npm test` → 30/30 passed (scoring caps, exactly-once rewards, stamp rules, stunt anti-farming,
+- **Tests:** `npm test` → 39/39 passed (trick state/bail/combos, a real-physics springboard launch + barrel roll
+  that lands with all 5 parcels, scoring caps, exactly-once rewards, stamp rules, stunt anti-farming,
   flip detection, pending-stunt loss on fail, save sanitising + storage failure, rack layouts never overlap,
   equipment really changes physics; plus full-physics runs: safe pass, shortcut faster, pool failure,
   lost parcels not counted, recovery keeps identity/condition, clock waits for throttle, 20 retries don't grow
   the physics world).
-- **Bot matrix (headless, gameplay inputs only):** every course passes its safe route with all three vehicles
-  (5/5 parcels with "Low & Sensible"). Shortcuts pass for all vehicles on all courses except the heavy Spyder on
-  Sunset's pool jump (falls in — by design it is "The Cargo Department").
-  Typical times: safe ≈ 59–62 s, shortcut ≈ 38–52 s.
+- **Bot matrix (headless, gameplay inputs only):** 18/18 — every course × vehicle × route (safe, shortcut)
+  delivers 5/5 parcels with "Low & Sensible", springboards included. Typical times: safe ≈ 56–60 s,
+  shortcut ≈ 36–52 s.
 - **Production build** loads with every asset `200` under `/arcade/send-it/` (nested static server) and starts a
   run with the real Slingshot.
 - **Screenshots** (real renders, not concept art): `docs/screens/` — neutral-light models (01–03), Sunset
@@ -61,6 +64,12 @@ git-ignored; on another machine run `vercel link` first (and disconnect Git agai
   pad).
 - **Real vehicles:** Slingshot 2026, Ryker 900 (default stock assembly), Spyder F3, each with the owner's fitted
   biker rider. Physics hulls/wheels/racks refitted to the measured models; collision is invisible.
+- **Outrageous air (on purpose not real physics):** 7 springboards/trampolines across the courses (launch + moon
+  gravity + a landing cushion so straps survive); 4 air tricks on Space/J picked by held direction (Headstand
+  Delivery, This Side Up (Not) barrel roll, Return To Sender helicopter, Surf's Up) with bail on early touchdown
+  and diminishing returns for spam; combos ("PRIORITY OVERNIGHT", "INTERNATIONAL SHIPPING") for multiple
+  tricks/flips in one jump; parcel toss & catch (E/K); gentle landing assist when you're not steering; easier
+  flips. Style cap raised to 4,000 (perfect run 11,500) — delivery still outweighs style.
 - **Cargo:** 5 required parcels + optional flamingo, strapped (strain → snap), damage by impact, loose/lost
   states, slow-down pickup that restores the same parcel. Honest HUD (ON BOARD, never "delivered" mid-run).
 - **Rules:** stop in the bay to deliver; ≥3 of 5 to pass; pool/wipeout/inverted/stuck/out-of-bounds fails; stunts
@@ -68,7 +77,7 @@ git-ignored; on another machine run `vercel link` first (and disconnect Git agai
   (`slingmods-send-it-v1`).
 - **Garage:** vehicle, 3 loading presets, suspension/tires/restraints (all change the simulation), cosmetic paint,
   live bounce test.
-- **Comedy:** 123 voiced dispatcher lines (walkie-talkie filtered, cooldown + no-repeat), triggered by what actually
+- **Comedy:** 139 voiced dispatcher lines (incl. trick/bail/launch/combo/catch reactions) (walkie-talkie filtered, cooldown + no-repeat), triggered by what actually
   happened (idling, reversing, crawling, speeding, honking, early losses, strap snaps, flips, pool...), slow-mo
   Incident Replay on failure, flying/floating helmet, proof-of-delivery photo, tracking history, "signed for by",
   fake customer review with stars, hold-music quips, ~40 gag signs.
@@ -83,9 +92,8 @@ git-ignored; on another machine run `vercel link` first (and disconnect Git agai
    on the RTX 4080 box. The in-app preview pane throttles hidden pages to ~2 fps, which is a tool artefact.
 3. **Nobody has listened to the generated audio yet** (I can't hear). Dan should check the dispatcher voice, SFX
    levels and music by ear.
-4. **Codex menu art: blocked, not made.** The Codex plugin (v1.0.2) sent `thread/name/set`, which the installed
-   Codex CLI rejects (`unknown variant`), so the job never started. Fix: `npm install -g @openai/codex@latest`,
-   then rerun the art brief (loading, three contract cards, dispatch and garage backgrounds; no text in images)
+4. **Codex menu art: not made yet.** First attempt failed (old Codex CLI rejected `thread/name/set`); Dan updated
+   Codex and a second job was started but produced no images before this handoff. Rerun the art brief (loading, three contract cards, dispatch and garage backgrounds; no text in images)
    into `public/assets/art/`. The UI works without it (contract cards use colour strips).
 5. **Asset rights for public release are unresolved:** the rider is an owner-purchased character and the vehicle
    models come from Three-Wheel Tour sources; redistribution permission is not established. See
@@ -108,6 +116,7 @@ git-ignored; on another machine run `vercel link` first (and disconnect Git agai
 
 ## Next highest-value task
 
-Play all three courses by hand on the Windows PC with sound on and a controller, and list anything that feels
-wrong (landings, braking distance, voice volume). Then decide on public-release rights for the rider/vehicle
-assets before any deployment.
+Play all three courses by hand (sound on, try a controller and a phone) and list anything that feels wrong —
+especially trick timing (is 0.6–0.9 s per trick too long/short?), springboard height, and whether the landing
+assist feels like help or like the game steering for you. Rider/vehicle redistribution rights are still
+unresolved (the model host is public-but-unlisted).

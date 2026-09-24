@@ -8,6 +8,11 @@ flamingo) to the delivery bay. Take the sensible road or the rooftop shortcut. D
 **Controls:** `W`/`↑` gas · `S`/`↓` brake (hold to reverse) · `A`/`D` nose up / nose down in the air · `R` retry ·
 `Esc` pause · `H` horn. Gamepad: RT/LT, left stick pitch, hold LB+RB to retry. Touch pads on phones.
 
+**Air tricks:** in the air press `Space`/`J` (pad X, touch TRICK). What you hold picks the trick: nothing =
+Headstand Delivery, gas = barrel roll, brake = helicopter spin, `A`/`D` = Surf's Up. Land mid-trick and you bail.
+`E`/`K` (pad B, touch TOSS) throws the top parcel up — catch it for points. Chevron springboards launch you into
+moon gravity.
+
 ```bash
 npm install
 npm run dev     # http://localhost:5190
@@ -19,6 +24,9 @@ npm run build   # dist/ — static, works at a site root or nested (e.g. /arcade
 assets, so they're git-ignored. With a local checkout of the Three-Wheel Tour project beside this one, run
 `npm run import-vehicles` to rebuild them into `public/assets/vehicles/` (the game shows a clear diagnostic if
 they're missing). Everything else — code, courses, audio, UI — is here.
+
+**Deploy:** pushing to `main` auto-deploys on Vercel. Production builds load the models from a separate
+model-host site (`VITE_MODEL_BASE` in `.env.production`); `npm run deploy:models` updates that site.
 
 Stack: TypeScript, Vite, Three.js (rendering), Rapier 2D (physics). See `HANDOFF.md` for status, verification and
 asset provenance.
