@@ -249,7 +249,10 @@ export class VehicleSim {
       }
       chassis.applyTorqueImpulse(T * dt, true);
     } else if (pitch !== 0) {
-      chassis.applyTorqueImpulse(pitch * spec.pitch.ground * dt, true);
+      // Hung on an edge (body touching, a wheel dangling): extra leverage so
+      // the player can rock free instead of waiting for a stuck reset.
+      const hung = this.contacts.body && !(this.contacts.rear && this.contacts.front);
+      chassis.applyTorqueImpulse(pitch * spec.pitch.ground * (hung ? 3.5 : 1) * dt, true);
     }
   }
 

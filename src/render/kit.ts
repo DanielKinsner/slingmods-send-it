@@ -1345,7 +1345,68 @@ function brokenGate(d: DecorItem, ctx: KitContext) {
   return g;
 }
 
+/** A yard of plastic lawn flamingos (count = variant). Often too many. */
+function lawnFlamingos(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const pink = M.paint('#f07aa8');
+  const n = d.variant ?? 2;
+  for (let i = 0; i < n; i++) {
+    const f = new THREE.Group();
+    const body = mesh(new THREE.SphereGeometry(0.22, 14, 10), pink);
+    body.scale.set(1.4, 0.9, 0.8);
+    body.position.y = 0.75;
+    f.add(body);
+    const neck = new THREE.CatmullRomCurve3([new THREE.Vector3(0.2, 0.8, 0), new THREE.Vector3(0.3, 1.05, 0), new THREE.Vector3(0.15, 1.25, 0), new THREE.Vector3(0.25, 1.4, 0)]);
+    f.add(mesh(new THREE.TubeGeometry(neck, 10, 0.045, 6), pink));
+    const head = mesh(new THREE.SphereGeometry(0.08, 10, 8), pink);
+    head.position.set(0.27, 1.42, 0);
+    f.add(head);
+    const beak = mesh(new THREE.ConeGeometry(0.035, 0.14, 6), M.matte('#1c1c1c'));
+    beak.rotation.z = -2.2;
+    beak.position.set(0.35, 1.37, 0);
+    f.add(beak);
+    for (const z of [-0.05, 0.05]) {
+      const leg = mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.6, 5), M.metal('#9aa0a8'));
+      leg.position.set(0, 0.3, z);
+      f.add(leg);
+    }
+    const x = d.x + (i % 4) * 1.1 + (i >= 4 ? 0.55 : 0);
+    f.position.set(x, groundAt(ctx, x) + 0.1, (d.z ?? -4.5) - Math.floor(i / 4) * 1.2);
+    f.rotation.y = ((i * 97) % 10) / 10 - 0.5;
+    g.add(f);
+  }
+  return g;
+}
+
+function koiPond(d: DecorItem, _ctx: KitContext) {
+  const g = new THREE.Group();
+  const w = d.w ?? 4;
+  const y = d.y ?? 0;
+  const stone = M.tex('pond-stone', concreteTex('#a9a296'));
+  // Basin rim + back garden terrace behind the gameplay plane.
+  g.add(boxAt(w + 1.2, 0.35, 5.4, stone, d.x + w / 2, y - 0.45, 0, 0.08));
+  const water = mesh(new THREE.BoxGeometry(w, 0.06, 5), new THREE.MeshPhysicalMaterial({ color: '#2f8f7a', roughness: 0.05, clearcoat: 1, transparent: true, opacity: 0.9 }), false, true);
+  water.position.set(d.x + w / 2, y + 0.1, 0);
+  g.add(water);
+  for (let i = 0; i < 3; i++) {
+    const koi = mesh(new THREE.CapsuleGeometry(0.06, 0.25, 4, 8), M.paint(i === 1 ? '#fbfaf7' : '#f26a1b'));
+    koi.rotation.z = Math.PI / 2;
+    koi.position.set(d.x + 0.8 + i * 1.1, y + 0.05, -1 + i * 0.9);
+    g.add(koi);
+    const phase = i * 2.1;
+    _ctx.updaters.push((t) => {
+      koi.position.x = d.x + w / 2 + Math.sin(t * 0.6 + phase) * (w / 2 - 0.4);
+      koi.rotation.y = Math.cos(t * 0.6 + phase) > 0 ? 0 : Math.PI;
+    });
+  }
+  // Garden terrace supports down to the valley (decorative).
+  g.add(boxAt(w + 1.2, 4, 0.4, stone, d.x + w / 2, y - 2.6, -2.9, 0.05));
+  return g;
+}
+
 const BUILDERS: Record<string, (d: DecorItem, ctx: KitContext) => THREE.Object3D> = {
+  lawnflamingo: lawnFlamingos,
+  koipond: koiPond,
   excavator,
   sandpile,
   lifeguard,
