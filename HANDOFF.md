@@ -67,8 +67,10 @@ preview panes).
    on the RTX 4080 box. The in-app preview pane throttles hidden pages to ~2 fps, which is a tool artefact.
 3. **Nobody has listened to the generated audio yet** (I can't hear). Dan should check the dispatcher voice, SFX
    levels and music by ear.
-4. **Codex menu art:** a Codex job was asked to generate loading/contract/menu illustrations into
-   `public/assets/art/`; none had arrived at handoff. The UI does not depend on it.
+4. **Codex menu art: blocked, not made.** The Codex plugin (v1.0.2) sent `thread/name/set`, which the installed
+   Codex CLI rejects (`unknown variant`), so the job never started. Fix: `npm install -g @openai/codex@latest`,
+   then rerun the art brief (loading, three contract cards, dispatch and garage backgrounds; no text in images)
+   into `public/assets/art/`. The UI works without it (contract cards use colour strips).
 5. **Asset rights for public release are unresolved:** the rider is an owner-purchased character and the vehicle
    models come from Three-Wheel Tour sources; redistribution permission is not established. See
    `public/assets/vehicles/provenance.json`.
