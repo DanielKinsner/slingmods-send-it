@@ -1,6 +1,9 @@
 # SEND IT — Handoff
 
-_Last updated: 2026-09-24. Local git only (no remote yet)._
+_Last updated: 2026-09-24. Public repo: https://github.com/DanielKinsner/slingmods-send-it — the four model
+GLBs (rider + 3 vehicles) are deliberately **not** in Git (purchased/licensed assets; purged from history too).
+On a fresh clone run `npm run import-vehicles` with the Three-Wheel Tour checkout beside it. The live Vercel build
+is deployed from this PC with `vercel deploy --prod` (see "Deploy" below), not from Git, so it keeps the models._
 
 ## Where it is and how to run it
 
@@ -19,6 +22,16 @@ npm run import-vehicles              # re-import vehicle/rider assets (read-only
 Developer-only URL switches (never on by default): `?inspect=slingshot|ryker|spyder` (neutral-light model
 view), `?bot=safe|shortcut|pool` (bot drives runs with gameplay inputs), `?dtmax=0.5` (catch-up in throttled
 preview panes).
+
+## Deploy (Vercel, from this PC)
+
+```bash
+npm run build
+vercel deploy dist --prod --yes
+```
+
+`dist/` is a plain static site (relative paths). The Vercel project is **not** connected to GitHub on purpose:
+a Git-triggered build would lack the git-ignored vehicle models.
 
 ## Verified this session
 

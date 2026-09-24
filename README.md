@@ -15,6 +15,11 @@ npm test
 npm run build   # dist/ — static, works at a site root or nested (e.g. /arcade/send-it/)
 ```
 
+**Vehicle models are not in this repo.** The Slingshot, Ryker, Spyder and rider GLBs are licensed/purchased
+assets, so they're git-ignored. With a local checkout of the Three-Wheel Tour project beside this one, run
+`npm run import-vehicles` to rebuild them into `public/assets/vehicles/` (the game shows a clear diagnostic if
+they're missing). Everything else — code, courses, audio, UI — is here.
+
 Stack: TypeScript, Vite, Three.js (rendering), Rapier 2D (physics). See `HANDOFF.md` for status, verification and
 asset provenance.
 
