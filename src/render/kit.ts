@@ -1428,7 +1428,63 @@ function skyline(d: DecorItem, _ctx: KitContext) {
   return g;
 }
 
+/** Springboard plate on the road (the launch itself is a 'launch' zone). */
+function launchPad(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const w = d.w ?? 3;
+  const x0 = d.x;
+  const y = groundAt(ctx, x0 + w / 2) + 0.02;
+  const tramp = d.variant === 1;
+  const c = document.createElement('canvas');
+  c.width = 256;
+  c.height = 256;
+  const k = c.getContext('2d')!;
+  k.fillStyle = tramp ? '#1d1e22' : '#f3c01c';
+  k.fillRect(0, 0, 256, 256);
+  k.fillStyle = tramp ? '#2aa7c9' : '#1d1e22';
+  for (let i = -2; i < 6; i++) {
+    k.beginPath();
+    k.moveTo(i * 64, 0);
+    k.lineTo(i * 64 + 32, 128);
+    k.lineTo(i * 64, 256);
+    k.lineTo(i * 64 + 22, 256);
+    k.lineTo(i * 64 + 54, 128);
+    k.lineTo(i * 64 + 22, 0);
+    k.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const plate = mesh(new THREE.BoxGeometry(w, 0.12, 4.4), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.5, metalness: 0.2 }));
+  plate.position.set(x0 + w / 2, y + 0.04, 0);
+  g.add(plate);
+  // Visible springs on the camera side.
+  const coil = M.metal('#c9ccd2');
+  for (const x of [x0 + 0.4, x0 + w / 2, x0 + w - 0.4]) {
+    const s = mesh(new THREE.TorusGeometry(0.16, 0.035, 6, 14), coil);
+    for (let i = 0; i < 3; i++) {
+      const ring = s.clone();
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(x, y - 0.08 - i * 0.07, 2.3);
+      g.add(ring);
+    }
+  }
+  if (tramp) {
+    const rim = mesh(new THREE.TorusGeometry(w / 2 + 0.1, 0.09, 8, 28), M.plastic('#2aa7c9'));
+    rim.rotation.x = Math.PI / 2;
+    rim.scale.set(1, 4.4 / w, 1);
+    rim.position.set(x0 + w / 2, y + 0.1, 0);
+    g.add(rim);
+  }
+  const pulse = plate.material as THREE.MeshStandardMaterial;
+  pulse.emissive = new THREE.Color(tramp ? '#2aa7c9' : '#f3c01c');
+  ctx.updaters.push((t) => {
+    pulse.emissiveIntensity = 0.15 + Math.max(0, Math.sin(t * 5)) * 0.35;
+  });
+  return g;
+}
+
 const BUILDERS: Record<string, (d: DecorItem, ctx: KitContext) => THREE.Object3D> = {
+  launchpad: launchPad,
   skyline,
   lawnflamingo: lawnFlamingos,
   koipond: koiPond,

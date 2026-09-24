@@ -28,6 +28,8 @@ export class CargoItem {
   overload = 0;
   impactCooldown = 0;
   strainLatched = false;
+  /** Seconds since this parcel was tossed (null when not in the air on purpose). */
+  tossT: number | null = null;
   pickup: Pickup | null = null;
   recoveredOnce = false;
   lastTouchedDeck = 0;
@@ -113,13 +115,18 @@ export class CargoSystem {
     return this.byCollider.get(handle);
   }
 
+  /** Seconds of reinforced straps (springboard landings). */
+  breakGrace = 0;
+
   /** Straps pull each parcel toward its slot; the chassis takes the reaction. */
   applyRestraints() {
     const v = this.vehicle;
     const chassis = v.chassis;
     const ca = chassis.rotation();
     const cw = chassis.angvel();
-    const cfg = this.restraint;
+    const base = this.restraint;
+    if (this.breakGrace > 0) this.breakGrace -= DT;
+    const cfg = this.breakGrace > 0 ? { ...base, breakDistance: base.breakDistance * 2.2, breakTime: base.breakTime * 3 } : base;
     for (const it of this.items) {
       if (it.pickup || !it.strapped) {
         it.tension = 0;

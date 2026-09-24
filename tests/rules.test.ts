@@ -13,10 +13,16 @@ const par = { fast: 30, express: 40, slow: 80 };
 const base = { required: 5, par, style: 0, flamingo: false };
 
 describe('scoring', () => {
-  it('caps a perfect standard run at 10,000 before the optional flamingo', () => {
+  it('caps a perfect standard run at 11,500 (style capped) before the optional flamingo', () => {
     const s = scoreRun({ ...base, passed: true, delivered: [1, 1, 1, 1, 1], time: 10, style: 99999 });
-    expect(s.total).toBe(10000);
-    expect(scoreRun({ ...base, passed: true, delivered: [1, 1, 1, 1, 1], time: 10, style: 99999, flamingo: true }).total).toBe(10000 + SCORE.flamingo);
+    expect(s.total).toBe(11500);
+    expect(s.style).toBe(SCORE.styleCap);
+    expect(scoreRun({ ...base, passed: true, delivered: [1, 1, 1, 1, 1], time: 10, style: 99999, flamingo: true }).total).toBe(11500 + SCORE.flamingo);
+  });
+  it('delivery still outweighs style: 3 parcels + max style < 5 clean parcels + no style', () => {
+    const stylish = scoreRun({ ...base, passed: true, delivered: [0.5, 0.5, 0.5], time: 90, style: 99999 }).total;
+    const careful = scoreRun({ ...base, passed: true, delivered: [1, 1, 1, 1, 1], time: 50, style: 0 }).total;
+    expect(careful).toBeGreaterThan(stylish - 1500);
   });
   it('never gives a negative time bonus and interpolates between thresholds', () => {
     expect(timeBonus(999, par)).toBe(0);

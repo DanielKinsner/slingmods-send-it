@@ -1,6 +1,6 @@
 import type { InputState } from '../sim/types';
 
-export type Action = 'retry' | 'pause' | 'confirm' | 'back' | 'up' | 'down' | 'left' | 'right' | 'horn';
+export type Action = 'retry' | 'pause' | 'confirm' | 'back' | 'up' | 'down' | 'left' | 'right' | 'horn' | 'trick' | 'toss';
 
 /**
  * Keyboard, gamepad and touch merged into one InputState. Releasing focus,
@@ -26,6 +26,8 @@ export class Input {
         if (k === 'Enter' || k === 'Space') this.fire('confirm');
         if (k === 'Backspace') this.fire('back');
         if (k === 'KeyH') this.fire('horn');
+        if (k === 'Space' || k === 'KeyJ') this.fire('trick');
+        if (k === 'KeyE' || k === 'KeyK') this.fire('toss');
       }
       this.keys.add(k);
     });
@@ -52,6 +54,23 @@ export class Input {
     for (const l of this.listeners) l(a);
   }
 
+  /** Direction held when a trick is pressed: gas = up, brake = down, pitch = side. */
+  trickDir(): 'none' | 'up' | 'down' | 'side' {
+    const k = this.keys;
+    const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+    const p = pads && Array.from(pads).find((g) => g && g.connected);
+    const ay = p?.axes[1] ?? 0;
+    const ax = p?.axes[0] ?? 0;
+    if (k.has('KeyW') || k.has('ArrowUp') || this.touch.throttle || ay < -0.5) return 'up';
+    if (k.has('KeyS') || k.has('ArrowDown') || this.touch.brake || ay > 0.5) return 'down';
+    if (k.has('KeyA') || k.has('KeyD') || k.has('ArrowLeft') || k.has('ArrowRight') || this.touch.up || this.touch.down || Math.abs(ax) > 0.5) return 'side';
+    return 'none';
+  }
+
+  fireAction(a: Action) {
+    this.fire(a);
+  }
+
   setTouch(key: keyof Input['touch'], down: boolean) {
     this.touch[key] = down;
     this.lastDevice = 'touch';
@@ -67,7 +86,11 @@ export class Input {
     if (b.some(Boolean) || p.axes.some((a) => Math.abs(a) > 0.4)) this.lastDevice = 'pad';
     if (edge(9)) this.fire('pause'); // Start/Menu
     if (edge(0)) this.fire('confirm'); // A
-    if (edge(1)) this.fire('back'); // B
+    if (edge(1)) {
+      this.fire('back'); // B (menus)
+      this.fire('toss'); // B (in a run)
+    }
+    if (edge(2)) this.fire('trick'); // X
     if (edge(3)) this.fire('retry'); // Y (menus/results)
     if (edge(12)) this.fire('up');
     if (edge(13)) this.fire('down');

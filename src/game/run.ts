@@ -7,6 +7,13 @@ import { RESTRAINTS, applyBuild } from '../data/vehicles';
 import { heightAt } from '../data/courses/build';
 import { StuntTracker, type StuntAward } from './stunts';
 import { type ScoreBreakdown, type Stamps, scoreRun, stampsFor } from './scoring';
+import { TrickState, trickFor, type TrickDir, type TrickKind } from './tricks';
+
+// Springboards and air tricks are deliberately not "real" physics.
+const LAUNCH_MIN_SPEED = 5.5;
+const MOON_GRAVITY = 0.6; // gravity scale during springboard air
+const CUSHION_VY = -6.5; // springboard landings are capped at this fall speed
+const TOSS_UP = 6.2;
 
 export const CONTENT_VERSION = 'send-it-1.0';
 
@@ -27,7 +34,14 @@ export type GameEvent =
   | { type: 'finished'; result: RunResult }
   | { type: 'impossible' }
   | { type: 'shortcut' }
-  | { type: 'surface'; surface: SurfaceKind };
+  | { type: 'surface'; surface: SurfaceKind }
+  | { type: 'trick-start'; kind: TrickKind }
+  | { type: 'trick-done'; kind: TrickKind; label: string; points: number; chain: number }
+  | { type: 'bail'; kind: TrickKind; x: number; y: number }
+  | { type: 'launch'; x: number; y: number; power: number }
+  | { type: 'toss'; id: string }
+  | { type: 'catch'; id: string; points: number }
+  | { type: 'trick-hint' };
 
 export interface ParcelResult {
   id: string;
@@ -109,7 +123,7 @@ export class Run {
   private prevVy = 0;
   private impossibleSent = false;
   private failTimer = 0;
-  learned = { throttle: false, brake: false, pitch: false };
+  learned = { throttle: false, brake: false, pitch: false, trick: false };
   private throttleHeld = 0;
 
   constructor(
@@ -208,6 +222,8 @@ export class Run {
 
     // Landing jolts for audio/fx.
     const air = v.airborne;
+    const touchdown = this.wasAirborne && !air;
+    if (!failed && this.phase !== 'finished') this.funPhysics(input, air, touchdown);
     if (air) this.airTime += DT;
     if (this.wasAirborne && !air && this.airTime > 0.2) {
       this.events.push({ type: 'landing', jolt: Math.max(0.5, -this.prevVy), x: p.x, y: p.y });
@@ -292,6 +308,168 @@ export class Run {
       if (this.settleTimer >= 1.0) this.finish();
     }
     void input;
+  }
+
+  // ------------------------------------------------------------------ fun
+  readonly tricks = new TrickState();
+  /** In springboard "moon" air. */
+  boosted = false;
+  private launchCooldown = 0;
+  private tossCooldown = 0;
+  private catches = 0;
+  private hintSent = false;
+  private pendingTrick: TrickDir | null = null;
+  private pendingToss = false;
+
+  /** Player pressed the trick button (direction held picks the trick). */
+  requestTrick(dir: TrickDir) {
+    this.pendingTrick = dir;
+  }
+  /** Player pressed the toss button: throw the top parcel up and try to catch it. */
+  requestToss() {
+    this.pendingToss = true;
+  }
+
+  /** Clearance under the chassis (terrain only). */
+  heightAboveGround(): number {
+    const p = this.vehicle.position;
+    const hit = this.world.castRay(new this.rapier.Ray({ x: p.x, y: p.y }, { x: 0, y: -1 }), 40, true, undefined, GROUPS.terrainQuery);
+    return hit ? hit.timeOfImpact - 0.55 : 40;
+  }
+
+  /** Every body that should move as "the vehicle" (chassis, wheels, strapped cargo). */
+  private vehicleBodies() {
+    const v = this.vehicle;
+    const list = [v.chassis, v.rear.axle, v.rear.wheel, v.front.axle, v.front.wheel];
+    for (const it of this.cargo.items) if (it.strapped && !it.pickup && it.state === 'onboard') list.push(it.body);
+    return list;
+  }
+
+  private setGravity(scale: number) {
+    for (const b of this.vehicleBodies()) b.setGravityScale(scale, true);
+    for (const it of this.cargo.items) if (!it.pickup) it.body.setGravityScale(scale, true);
+  }
+
+  private funPhysics(input: InputState, air: boolean, touchdown: boolean) {
+    const v = this.vehicle;
+    const running = this.phase === 'running';
+    this.launchCooldown -= DT;
+    this.tossCooldown -= DT;
+    const height = air ? this.heightAboveGround() : 0;
+
+    // One-time hint the first time there's real air under the wheels.
+    if (running && air && !this.hintSent && !this.learned.trick && height > 1.6) {
+      this.hintSent = true;
+      this.events.push({ type: 'trick-hint' });
+    }
+
+    // Tricks.
+    if (this.pendingTrick && running) {
+      for (const e of this.tricks.request(trickFor(this.pendingTrick), air, height)) if (e.type === 'trick-start') this.events.push({ type: 'trick-start', kind: e.kind });
+    }
+    this.pendingTrick = null;
+    for (const e of this.tricks.step(DT, air, touchdown)) {
+      if (e.type === 'trick-done') {
+        this.learned.trick = true;
+        this.events.push({ type: 'trick-done', kind: e.kind, label: e.label, points: e.points, chain: e.chain });
+        for (const s of this.stunts.addAirAward({ id: 'trick:' + e.kind, label: e.label, points: e.points })) {
+          if (s.type === 'pending') this.events.push({ type: 'stunt-pending', awards: s.awards, total: s.total });
+        }
+      } else if (e.type === 'bail') {
+        const p = v.position;
+        this.events.push({ type: 'bail', kind: e.kind, x: p.x, y: p.y });
+        for (const s of this.stunts.bail()) if (s.type === 'dropped') this.events.push({ type: 'stunt-dropped', total: s.total });
+        // The parcels pay for it.
+        for (const it of this.cargo.items) {
+          if (it.state !== 'onboard' || it.pickup) continue;
+          const m = it.spec.mass;
+          it.body.applyImpulse({ x: (Math.random() - 0.6) * 2.5 * m, y: (2.5 + Math.random() * 2.5) * m }, true);
+        }
+        v.chassis.applyTorqueImpulse((Math.random() - 0.5) * v.chassis.mass() * 2, true);
+      }
+    }
+
+    // Springboards.
+    if (running && this.launchCooldown <= 0 && (v.contacts.rear || v.contacts.front) && v.forwardSpeed >= LAUNCH_MIN_SPEED) {
+      const p = v.position;
+      const pad = this.course.zones.find((z) => z.kind === 'launch' && inRect(z, p.x, p.y));
+      if (pad) {
+        const power = pad.bonus ?? 10;
+        for (const b of this.vehicleBodies()) {
+          const lv = b.linvel();
+          b.setLinvel({ x: lv.x + 1.5, y: power }, true);
+        }
+        v.chassis.setAngvel(0.6, true); // a little nose-up drama
+        this.setGravity(MOON_GRAVITY);
+        this.boosted = true;
+        this.launchCooldown = 1.5;
+        this.events.push({ type: 'launch', x: p.x, y: p.y, power });
+      }
+    }
+    if (this.boosted) {
+      const vy = v.chassis.linvel().y;
+      // Warranty-grade landing cushion.
+      if (vy < CUSHION_VY && height < 3.5) {
+        for (const b of this.vehicleBodies()) {
+          const lv = b.linvel();
+          if (lv.y < CUSHION_VY) b.setLinvel({ x: lv.x, y: CUSHION_VY }, true);
+        }
+      }
+      if (touchdown) {
+        this.boosted = false;
+        this.setGravity(1);
+        this.cargo.breakGrace = 0.7; // springboard warranty: the straps get a moment
+      }
+    }
+
+    // Landing assist: when not steering the pitch and the ground is close, ease level.
+    if (air && input.pitch === 0 && height < 2.4 && v.chassis.linvel().y < 0 && !this.tricks.active) {
+      const a = wrapAngle(v.angle);
+      if (Math.abs(a) < 1.3) {
+        const w = v.chassis.angvel();
+        const T = Math.max(-1, Math.min(1, -a * 1.6 - w * 0.45)) * v.spec.pitch.air * 0.55;
+        v.chassis.applyTorqueImpulse(T * DT, true);
+      }
+    }
+
+    // Parcel toss.
+    if (this.pendingToss && running && this.tossCooldown <= 0) {
+      const top = this.cargo.items
+        .filter((i) => i.strapped && i.state === 'onboard' && !i.pickup && i.tossT === null)
+        .sort((a, b) => v.toLocal(b.pos.x, b.pos.y)[1] - v.toLocal(a.pos.x, a.pos.y)[1])[0];
+      if (top) {
+        top.strapped = false;
+        top.tossT = 0;
+        const cv = v.chassis.linvel();
+        top.body.setLinvel({ x: cv.x, y: cv.y + TOSS_UP }, true);
+        top.body.setAngvel(-9 + Math.random() * 3, true);
+        this.tossCooldown = 1.2;
+        this.events.push({ type: 'toss', id: top.spec.id });
+      }
+    }
+    this.pendingToss = false;
+    for (const it of this.cargo.items) {
+      if (it.tossT === null) continue;
+      it.tossT += DT;
+      if (it.state === 'lost' || it.state === 'loose' || it.tossT > 4) {
+        it.tossT = null;
+        continue;
+      }
+      if (it.tossT > 0.5 && it.state === 'onboard') {
+        const rel = it.body.linvel();
+        const cv = v.chassis.linvel();
+        if (Math.hypot(rel.x - cv.x, rel.y - cv.y) < 2.5) {
+          it.tossT = null;
+          it.strapped = true;
+          this.catches++;
+          const points = Math.max(100, 500 - (this.catches - 1) * 75);
+          this.events.push({ type: 'catch', id: it.spec.id, points });
+          for (const s of this.stunts.addAirAward({ id: 'trick:toss', label: 'SIGNED, SEALED, CAUGHT', points })) {
+            if (s.type === 'pending') this.events.push({ type: 'stunt-pending', awards: s.awards, total: s.total });
+          }
+        }
+      }
+    }
   }
 
   private fail(reason: FailReason) {

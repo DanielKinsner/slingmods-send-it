@@ -40,7 +40,7 @@ export interface SaveData {
   achievements: string[];
   processed: string[]; // attempt ids already rewarded
   firstRunDone: boolean;
-  lessons: { throttle: boolean; brake: boolean; pitch: boolean };
+  lessons: { throttle: boolean; brake: boolean; pitch: boolean; trick: boolean };
   stats: { deliveries: number; parcels: number; pools: number; flips: number };
 }
 
@@ -71,7 +71,7 @@ export function defaultSave(): SaveData {
     achievements: [],
     processed: [],
     firstRunDone: false,
-    lessons: { throttle: false, brake: false, pitch: false },
+    lessons: { throttle: false, brake: false, pitch: false, trick: false },
     stats: { deliveries: 0, parcels: 0, pools: 0, flips: 0 },
   };
 }
@@ -122,7 +122,7 @@ export function sanitize(raw: unknown): SaveData {
   d.achievements = Array.isArray(raw.achievements) ? raw.achievements.filter((x): x is string => typeof x === 'string') : [];
   d.processed = Array.isArray(raw.processed) ? raw.processed.filter((x): x is string => typeof x === 'string').slice(-100) : [];
   d.firstRunDone = bool(raw.firstRunDone, false);
-  if (isObj(raw.lessons)) d.lessons = { throttle: bool(raw.lessons.throttle, false), brake: bool(raw.lessons.brake, false), pitch: bool(raw.lessons.pitch, false) };
+  if (isObj(raw.lessons)) d.lessons = { throttle: bool(raw.lessons.throttle, false), brake: bool(raw.lessons.brake, false), pitch: bool(raw.lessons.pitch, false), trick: bool(raw.lessons.trick, false) };
   if (isObj(raw.stats)) {
     const st = raw.stats;
     d.stats = { deliveries: num(st.deliveries, 0, 0), parcels: num(st.parcels, 0, 0), pools: num(st.pools, 0, 0), flips: num(st.flips, 0, 0) };

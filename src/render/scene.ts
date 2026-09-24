@@ -9,6 +9,9 @@ import { buildVehicle, poseVehicle, type VehicleVisual } from './vehicleModel';
 import { buildCargo, type CargoVisual } from './cargoModel';
 import { Particles, blobShadow } from './fx';
 import type { Run } from '../game/run';
+import { trickVisual } from '../game/tricks';
+
+const Z_AXIS = new THREE.Vector3(0, 0, 1);
 
 export interface Snapshot {
   x: number;
@@ -81,6 +84,11 @@ export class GameScene {
   /** Extra framing for title/garage shots. */
   framing: 'run' | 'attract' | 'garage' = 'run';
   private lastBrace = 0;
+  private tqLocal = new THREE.Quaternion();
+  private tqAngle = new THREE.Quaternion();
+  private tqWorld = new THREE.Quaternion();
+  private tEuler = new THREE.Euler();
+  private tmpV = new THREE.Vector3();
 
   constructor(canvas: HTMLCanvasElement, logo: HTMLImageElement | null, quality: 'high' | 'low') {
     this.logo = logo;
@@ -288,7 +296,15 @@ export class GameScene {
     }));
     const braceTarget = extra.throttle * 0.12 - extra.brake * 0.18;
     this.lastBrace += (braceTarget - this.lastBrace) * Math.min(1, dt * 6);
-    if (this.vehicle) poseVehicle(this.vehicle, x, y, a, wheels, this.lastBrace);
+    const trick = trickVisual(run.tricks.active);
+    if (this.vehicle) poseVehicle(this.vehicle, x, y, a, wheels, this.lastBrace, trick);
+    // World-space version of the trick rotation, pivoting on the chassis.
+    const trickOn = trick.roll !== 0 || trick.yaw !== 0;
+    if (trickOn) {
+      this.tqLocal.setFromEuler(this.tEuler.set(trick.roll, trick.yaw, 0, 'YXZ'));
+      this.tqAngle.setFromAxisAngle(Z_AXIS, a);
+      this.tqWorld.copy(this.tqAngle).multiply(this.tqLocal).multiply(this.tqAngle.clone().invert());
+    }
 
     // Cargo.
     const items = run.cargo.items;
@@ -298,7 +314,12 @@ export class GameScene {
       const p0 = prev.cargo[i];
       const p1 = cur.cargo[i];
       vis.root.position.set(p0.x + (p1.x - p0.x) * alpha, p0.y + (p1.y - p0.y) * alpha, 0);
-      vis.root.rotation.z = lerpAngle(p0.a, p1.a, alpha);
+      vis.root.rotation.set(0, 0, lerpAngle(p0.a, p1.a, alpha));
+      if (trickOn && it.strapped && it.state === 'onboard' && !it.pickup) {
+        this.tmpV.set(x, y, 0);
+        vis.root.position.sub(this.tmpV).applyQuaternion(this.tqWorld).add(this.tmpV);
+        vis.root.quaternion.premultiply(this.tqWorld);
+      }
       const strapped = it.strapped && !it.pickup;
       for (const s of vis.straps) s.visible = strapped;
       const tension = Math.min(1, it.tension);

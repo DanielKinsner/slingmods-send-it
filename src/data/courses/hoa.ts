@@ -68,6 +68,8 @@ export const HOA: CourseSpec = {
     { id: 'p-crest', kind: 'prompt', x0: 254, x1: 262, y0: -2, y1: 6, text: 'BLIND CREST AHEAD — LAND IT, THEN BRAKE' },
     { id: 'p-deliver', kind: 'prompt', lesson: 'deliver', x0: 296, x1: PAD.x0, y0: -2, y1: 6, text: 'NARROW PAD — STOP ON THE DRIVEWAY, NOT IN THE WORKSHOP' },
     { id: 'shortcut', kind: 'shortcut', x0: 137, x1: 206, y0: 0, y1: 12 },
+    { id: 'sb-tramp-1', kind: 'launch', x0: 3, x1: 6.5, y0: -1, y1: 2.5, bonus: 10 },
+    { id: 'sb-tramp-2', kind: 'launch', x0: 211, x1: 214.5, y0: VALLEY - 1, y1: VALLEY + 2.5, bonus: 11 },
     { id: 'garage-access', kind: 'stunt', x0: 137, x1: 152, y0: 1.2, y1: 12, takeoff: [LIP.x - 6, LIP.x + 1], bonus: 300, label: 'GARAGE ACCESS' },
     { id: 'roof-run', kind: 'stunt', x0: 176, x1: 206, y0: 0, y1: 12, takeoff: [150, 173], bonus: 250, label: 'POND AVOIDED' },
     { id: 'garage-exit', kind: 'stunt', x0: 206, x1: 250, y0: -6, y1: 12, takeoff: [190, 207], bonus: 400, event: 'clean_shortcut_landing', label: 'VIOLATION #46' },
@@ -85,6 +87,9 @@ export const HOA: CourseSpec = {
     // The depot.
     { kind: 'shop', x: -20, w: 30, h: 8, variant: 3, text: 'SLINGMODS SATELLITE DEPOT', z: -5 },
     { kind: 'crates', x: 2, z: -3.8, variant: 5 },
+    { kind: 'launchpad', x: 3, w: 3.5, variant: 1 },
+    { kind: 'launchpad', x: 211, w: 3.5, variant: 1 },
+    { kind: 'sign', x: 209, w: 3.2, h: 1.4, y: 0.9, base: VALLEY + 0.15, color: 'white', text: 'SOMEBODY’S|TRAMPOLINE', small: 'Please return it after use.' },
     { kind: 'sign', x: 6, w: 3.6, h: 1.6, y: 1.3, color: 'white', text: 'RESIDENTIAL SPEED|LIMIT: A REASONABLE ONE', small: 'They will not tell you what that is.' },
 
     // Driveway crests.

@@ -89,6 +89,23 @@ export const DISPATCH: Line[] = [
   { id: 'e21', event: 'stunt_combo', text: 'Style points are not redeemable for parcels. We checked.' },
   { id: 'e22', event: 'recovered_again', text: 'Same box, second pickup. It is starting to feel like a relationship.' },
   { id: 'e23', event: 'near_bay_fast', text: 'The bay is the stopping part. Just a thought.' },
+  // Tricks, springboards, tosses (originals).
+  { id: 't01', event: 'launch', text: 'That was not a ramp. That was a decision.' },
+  { id: 't02', event: 'launch', text: 'The springboard is municipal property. So, technically, was that.' },
+  { id: 't03', event: 'launch', text: 'Dispatch has lost visual. Dispatch is looking up.' },
+  { id: 't04', event: 'launch', text: 'Please return to the ground at your earliest convenience.' },
+  { id: 't05', event: 'bail', text: 'You started a trick. The ground finished it.' },
+  { id: 't06', event: 'bail', text: 'Landing mid-stunt is technically a landing. Technically.' },
+  { id: 't07', event: 'bail', text: 'Style points have been returned to sender.' },
+  { id: 't08', event: 'bail', text: 'The parcels would like it noted that they were not consulted.' },
+  { id: 't09', event: 'combo', text: 'Dispatch has no category for that. Dispatch is creating one.' },
+  { id: 't10', event: 'combo', text: 'Please stop doing that with company property. Actually, do it again.' },
+  { id: 't11', event: 'combo', text: 'That is not in the delivery manual. The delivery manual is now jealous.' },
+  { id: 't12', event: 'big_combo', text: 'Okay. Okay. Dispatch saw that. Everyone saw that.' },
+  { id: 't13', event: 'big_combo', text: 'International shipping. We do not offer international shipping. You did anyway.' },
+  { id: 't14', event: 'catch', text: 'Self-delivered. Incredible. Please never do that again.' },
+  { id: 't15', event: 'catch', text: 'Parcel returned to vehicle by air. Our lawyers are typing.' },
+  { id: 't16', event: 'catch', text: 'You threw the package and caught the package. Dispatch is speechless. Almost.' },
   // Course flavour.
   { id: 'p01', event: 'run_started', text: 'Pier Pressure. Mind the gulls. They are unionized.', course: 'pier' }, // +
   { id: 'p02', event: 'shortcut_taken', text: 'You are now on the snack stand roof. The snack stand has not been informed.', course: 'pier' }, // +

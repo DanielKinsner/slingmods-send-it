@@ -499,15 +499,27 @@ export function settingsScreen(api: ScreenApi, back: () => void): HTMLElement {
   return root;
 }
 
-export function touchControls(onChange: (key: 'throttle' | 'brake' | 'up' | 'down', down: boolean) => void): HTMLElement {
+export function touchControls(
+  onChange: (key: 'throttle' | 'brake' | 'up' | 'down', down: boolean) => void,
+  onAction: (a: 'trick' | 'toss') => void = () => {},
+): HTMLElement {
   const root = h(`
     <div class="touch">
       <div class="grp"><div class="tpad" data-k="up">▲<small>NOSE UP</small></div><div class="tpad" data-k="down">▼<small>NOSE DOWN</small></div></div>
+      <div class="grp col"><div class="tpad mini trick" data-a="trick">★<small>TRICK</small></div><div class="tpad mini" data-a="toss">⬆<small>TOSS</small></div></div>
       <div class="grp"><div class="tpad" data-k="brake">■<small>BRAKE</small></div><div class="tpad big gas" data-k="throttle">▶<small>GAS</small></div></div>
     </div>`);
+  root.querySelectorAll<HTMLElement>('[data-a]').forEach((pad) => {
+    pad.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      pad.classList.add('on');
+      onAction(pad.dataset.a as 'trick' | 'toss');
+    });
+    for (const ev of ['pointerup', 'pointercancel', 'pointerleave'] as const) pad.addEventListener(ev, () => pad.classList.remove('on'));
+  });
   // Each pad tracks its own set of pointer ids so multi-touch works and
   // cancellation always releases.
-  root.querySelectorAll<HTMLElement>('.tpad').forEach((pad) => {
+  root.querySelectorAll<HTMLElement>('.tpad[data-k]').forEach((pad) => {
     const ids = new Set<number>();
     const k = pad.dataset.k as 'throttle' | 'brake' | 'up' | 'down';
     const update = () => {

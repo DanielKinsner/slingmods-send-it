@@ -172,10 +172,35 @@ export class StuntTracker {
     out.push({ type: 'pending', awards: [a], total: this.pendingTotal });
   }
 
+  /** An award earned mid-air (a trick). It banks with the landing like the rest. */
+  addAirAward(a: StuntAward): StuntEvent[] {
+    if (this.dead) return [];
+    this.pending.push(a);
+    this.landing = true;
+    return [{ type: 'pending', awards: [a], total: this.pendingTotal }];
+  }
+
+  /** Landed mid-trick: everything pending is lost. */
+  bail(): StuntEvent[] {
+    if (!this.pending.length) return [];
+    const total = this.pendingTotal;
+    this.pending = [];
+    this.landing = false;
+    this.cleanTouch = false;
+    return [{ type: 'dropped', total }];
+  }
+
   private bank(out: StuntEvent[]) {
     const awards = this.pending;
     if (this.cleanTouch && awards.some((a) => a.id === 'air')) {
       awards.push({ id: 'clean', label: 'CLEAN LANDING', points: 150 });
+    }
+    const tricks = awards.filter((a) => a.id.startsWith('trick:') || a.id === 'flip');
+    if (tricks.length >= 2) {
+      const sum = tricks.reduce((s, a) => s + a.points, 0);
+      const n = tricks.length;
+      const label = n >= 4 ? 'INTERNATIONAL SHIPPING' : n === 3 ? 'PRIORITY OVERNIGHT' : 'COMBO';
+      awards.push({ id: 'combo', label: `${label} ×${n}`, points: Math.round(sum * 0.3 * (n - 1)) });
     }
     const total = awards.reduce((s, a) => s + a.points, 0);
     const flips = awards.filter((a) => a.id === 'flip').reduce((s, a) => s + (parseInt(a.label) || 1), 0);

@@ -76,10 +76,16 @@ loader.setMeshoptDecoder(MeshoptDecoder);
 const cache = new Map<string, Promise<GLTF>>();
 const fitCache = new Map<string, Promise<RiderFit>>();
 
+// The licensed model files are not in the public repo. Production builds load
+// them from a separate asset host (VITE_MODEL_BASE); local copies are the fallback.
+const MODEL_BASE: string = import.meta.env.VITE_MODEL_BASE ?? '';
+
 function loadGLTF(url: string): Promise<GLTF> {
   let p = cache.get(url);
   if (!p) {
-    p = loader.loadAsync(BASE + url).catch((e) => {
+    const local = () => loader.loadAsync(BASE + url);
+    const first = MODEL_BASE && url.endsWith('.glb') ? loader.loadAsync(MODEL_BASE + url).catch(local) : local();
+    p = first.catch((e) => {
       cache.delete(url);
       throw new Error(`Required model failed to load: ${url} (${(e as Error)?.message ?? e})`);
     });
@@ -124,6 +130,9 @@ export interface VehicleVisual {
   headVisual: THREE.Object3D | null;
   helmetAnchor: THREE.Object3D;
   deck: THREE.Group;
+  pivot: THREE.Group;
+  rider: THREE.Object3D;
+  riderRest: THREE.Vector3;
   spec: VehicleSpec;
   dispose(): void;
 }
@@ -170,9 +179,12 @@ export async function buildVehicle(spec: VehicleSpec, paint: string | null): Pro
 
   const root = new THREE.Group();
   root.name = `vehicle-${spec.id}`;
+  // Trick pivot: barrel rolls / helicopter spins rotate everything on it.
+  const pivot = new THREE.Group();
+  root.add(pivot);
   const turn = new THREE.Group();
   turn.rotation.y = -Math.PI / 2; // model -Z forward -> world +X
-  root.add(turn);
+  pivot.add(turn);
   const offset = new THREE.Group();
   offset.position.set(0, -a.origin[1], -a.origin[0]);
   turn.add(offset);
@@ -249,7 +261,7 @@ export async function buildVehicle(spec: VehicleSpec, paint: string | null): Pro
   const helmetAnchor = rider.getObjectByName('driver_head') ?? rider;
 
   const deck = deckRack(spec);
-  root.add(deck);
+  pivot.add(deck);
 
   return {
     id: spec.id,
@@ -263,6 +275,9 @@ export async function buildVehicle(spec: VehicleSpec, paint: string | null): Pro
     headVisual,
     helmetAnchor,
     deck,
+    pivot,
+    rider,
+    riderRest: rider.position.clone(),
     spec,
     dispose() {
       root.traverse((o) => {
@@ -279,6 +294,11 @@ export async function buildVehicle(spec: VehicleSpec, paint: string | null): Pro
 }
 
 const tmpQ = new THREE.Quaternion();
+const HIP = new THREE.Vector3(0, 0.6, 0.25); // approx. pelvis, model space
+const POSE_Q = new THREE.Quaternion();
+const POSE_E = new THREE.Euler();
+const POSE_P = new THREE.Vector3();
+const POSE_OFFSET = new THREE.Vector3();
 const AX = new THREE.Vector3(1, 0, 0);
 
 /**
@@ -292,9 +312,31 @@ export function poseVehicle(
   angle: number,
   wheelsLocal: { x: number; y: number; spin: number }[],
   brace: number,
+  trick: { roll: number; yaw: number; pose: string | null; poseT: number } = { roll: 0, yaw: 0, pose: null, poseT: 0 },
 ) {
   vis.root.position.set(x, y, 0);
   vis.root.rotation.z = angle;
+  vis.pivot.rotation.set(trick.roll, trick.yaw, 0, 'YXZ');
+  // Rider trick poses (model space: +Y up, -Z forward).
+  const t = trick.poseT;
+  let rx = 0;
+  let rz = 0;
+  POSE_OFFSET.set(0, 0, 0);
+  if (trick.pose === 'superman') {
+    // "Headstand delivery": the rider flips forward out of the seat, legs up.
+    rx = -Math.PI * t;
+    POSE_OFFSET.set(0, 1.0 * t, -0.05 * t);
+  } else if (trick.pose === 'standup') {
+    // Stands on the seat and wobbles, like it's a surfboard.
+    rx = 0.2 * t;
+    rz = Math.sin(t * Math.PI * 4) * 0.28 * t;
+    POSE_OFFSET.set(0, 0.75 * t, 0.1 * t);
+  }
+  // Rotate about the hips, not the vehicle floor.
+  POSE_Q.setFromEuler(POSE_E.set(rx, 0, rz));
+  POSE_P.copy(HIP).applyQuaternion(POSE_Q);
+  vis.rider.quaternion.copy(POSE_Q);
+  vis.rider.position.copy(vis.riderRest).add(HIP).sub(POSE_P).add(POSE_OFFSET);
   const s = vis.spec;
   const rear = wheelsLocal[0];
   const front = wheelsLocal[1];

@@ -165,6 +165,18 @@ export class Hud {
     }, 1700);
   }
 
+  /** Quick mid-air trick callout; stacks upward for combos. */
+  trickCall(label: string, points: number, chain: number) {
+    const el = document.createElement('div');
+    el.className = 'trick-call passthru';
+    el.style.setProperty('--n', String(Math.min(chain, 5)));
+    el.innerHTML = `<b></b><span></span>`;
+    el.querySelector('b')!.textContent = chain > 1 ? `${label} ×${chain}` : label;
+    el.querySelector('span')!.textContent = `+${points}`;
+    this.root.appendChild(el);
+    setTimeout(() => el.remove(), 1300);
+  }
+
   banner(text: string, sub = '', good = false, ms = 1800) {
     this.bannerEl?.remove();
     const b = el('div', `banner passthru${good ? ' good' : ''}`);

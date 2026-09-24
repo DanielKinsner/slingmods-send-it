@@ -113,6 +113,10 @@ export const SUNSET: CourseSpec = {
     { id: 'p-pitch', kind: 'prompt', lesson: 'pitch', x0: 142, x1: 152, y0: -2, y1: 8, text: 'IN THE AIR:  A = NOSE UP   D = NOSE DOWN' },
     { id: 'p-deliver', kind: 'prompt', lesson: 'deliver', x0: BAY_X0 - 28, x1: BAY_X0, y0: -8, y1: 4, text: 'BRAKE TO DELIVER — STOP IN THE BAY' },
     { id: 'shortcut', kind: 'shortcut', x0: ROOF_X0, x1: ROOF_END, y0: ROOF_Y - 0.4, y1: 14 },
+    // Springboards (bonus = launch speed, m/s).
+    { id: 'sb-lot', kind: 'launch', x0: 26, x1: 29.5, y0: -1, y1: 2.5, bonus: 10 },
+    { id: 'sb-dig', kind: 'launch', x0: 145.5, x1: 149, y0: -1, y1: 2.5, bonus: 11 },
+    { id: 'sb-beach', kind: 'launch', x0: TERRACE_END + 43, x1: TERRACE_END + 46.5, y0: BAY_Y - 1, y1: BAY_Y + 2.5, bonus: 10 },
     { id: 'detour-air', kind: 'stunt', x0: 162, x1: 200, y0: -3, y1: 12, takeoff: [152, 162], bonus: 200, label: 'DETOUR TAKEN' },
     {
       id: 'pool-jump',
@@ -155,6 +159,8 @@ export const SUNSET: CourseSpec = {
     { kind: 'person', x: -1, z: -3.6, color: '#d8242b', variant: 1, rot: 0.6 },
     { kind: 'palm', x: 12, z: -9, h: 9, variant: 1 },
     { kind: 'light', x: 22 },
+    { kind: 'launchpad', x: 26, w: 3.5 },
+    { kind: 'sign', x: 30.5, w: 3.2, h: 1.5, y: 1.3, color: 'yellow', text: 'MUNICIPAL|SPRINGBOARD', small: 'Not a ramp. A decision.' },
 
     // B: the sensible neighbourhood.
     { kind: 'apartment', x: 20, w: 16, h: 14, z: -24, color: '#f0dcc4' },
@@ -179,6 +185,8 @@ export const SUNSET: CourseSpec = {
     { kind: 'person', x: 136, z: -3.8, color: '#f26a1b', variant: 1, rot: 0.3 },
     { kind: 'sign', x: 147, w: 3.2, h: 1.6, y: 1.4, color: 'dark', text: 'DETOUR →', small: '“Detour” is a strong word.' },
     { kind: 'sandpile', x: 156.5, w: 12 },
+    { kind: 'launchpad', x: 145.5, w: 3.5 },
+    { kind: 'sign', x: 143.5, w: 3.2, h: 1.5, y: 1.3, color: 'red', text: 'EXPERIMENTAL|DELIVERY ASSIST', small: 'Warranty void on contact' },
     { kind: 'cones', x: 166, variant: 3 },
     { kind: 'sign', x: 176, w: 3.4, h: 1.5, y: 1.3, color: 'white', text: 'CONSTRUCTION ENDS', small: 'Consequences do not.' },
     { kind: 'light', x: 190 },
@@ -212,6 +220,7 @@ export const SUNSET: CourseSpec = {
     // E0: beachfront (new).
     { kind: 'sign', x: TERRACE_END + 44, w: 3.6, h: 1.6, y: 1.3, color: 'blue', text: 'PUBLIC BEACH', small: 'No deliveries. We mean it. (We don’t.)' },
     { kind: 'lifeguard', x: TERRACE_END + 56, z: -9 },
+    { kind: 'launchpad', x: TERRACE_END + 43, w: 3.5 },
     { kind: 'umbrellas', x: TERRACE_END + 62, w: 20 },
     { kind: 'sign', x: TERRACE_END + 70, w: 2.8, h: 1.3, y: 1.3, color: 'yellow', text: 'SOFT SAND', small: 'Soft landing not implied.' },
     { kind: 'palm', x: TERRACE_END + 80, z: -8, h: 9, variant: 1 },

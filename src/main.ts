@@ -423,7 +423,10 @@ class Game {
 
   setTouch(on: boolean) {
     if (on && !this.touch) {
-      this.touch = S.touchControls((k, down) => this.input.setTouch(k, down));
+      this.touch = S.touchControls(
+        (k, down) => this.input.setTouch(k, down),
+        (a) => this.input.fireAction(a),
+      );
       this.ui.appendChild(this.touch);
     } else if (!on && this.touch) {
       this.touch.remove();
@@ -455,7 +458,11 @@ class Game {
         this.honks++;
         if (this.honks === 3) this.line('honk', true);
       }
-      if (this.mode === 'run') return;
+      if (this.mode === 'run' && this.run) {
+        if (a === 'trick') this.run.requestTrick(this.input.trickDir());
+        if (a === 'toss') this.run.requestToss();
+        return;
+      }
       if (a === 'up' || a === 'down' || a === 'left' || a === 'right') this.moveFocus(a === 'up' || a === 'left' ? -1 : 1);
       if (a === 'confirm') {
         const f = document.activeElement as HTMLElement | null;
@@ -722,10 +729,60 @@ class Game {
         const air = e.awards.find((a) => a.id === 'air');
         if (air && parseFloat(air.label.split(' ')[1]) > 1.6 && !e.awards.some((a) => a.id === 'flip')) this.line('big_air');
         if (e.awards.some((a) => a.id === 'wheelie')) this.line('wheelie');
+        const combo = e.awards.find((a) => a.id === 'combo');
+        if (combo) {
+          A.play('drum-hit', { vol: 0.6, jitter: 0 });
+          A.play('cheer', { vol: 0.5 });
+          this.line(e.awards.length >= 5 ? 'big_combo' : 'combo', true);
+          this.track(`Performed ${combo.label.toLowerCase()} (unrequested)`);
+        }
         break;
       }
       case 'stunt-dropped':
         this.hud.stunt([{ id: 'x', label: 'STUNT LOST', points: e.total }], e.total, true);
+        break;
+      case 'trick-hint':
+        this.hud.prompt(
+          this.touchWanted()
+            ? 'TAP <b>TRICK</b> IN THE AIR · HOLD GAS / BRAKE TO CHANGE IT · <b>TOSS</b> A PARCEL'
+            : '<kbd>SPACE</kbd> TRICK IN THE AIR · HOLD <kbd>W</kbd> / <kbd>S</kbd> / <kbd>A</kbd> TO CHANGE IT · <kbd>E</kbd> TOSS A PARCEL',
+          5,
+        );
+        break;
+      case 'trick-start':
+        A.play('wind-whoosh', { vol: 0.55, rate: e.kind === 'helicopter' ? 1.3 : 1 });
+        break;
+      case 'trick-done':
+        this.hud.trickCall(e.label, e.points, e.chain);
+        A.play('reward', { vol: 0.35, rate: 1 + e.chain * 0.08, jitter: 0 });
+        break;
+      case 'bail': {
+        this.hud.banner('BAILED', 'Landed mid-trick. The parcels noticed.', false, 1400);
+        A.play('crash', { vol: 0.6 });
+        A.play('crowd-aww', { vol: 0.5 });
+        this.scene.shake(0.3);
+        P.emit(16, { x: e.x, y: e.y - 0.4, color: '#cdbb9c', speed: 3, life: 0.9, size: 0.9, grow: 2 });
+        this.line('bail', true);
+        const names: Record<string, string> = { superman: 'a headstand', barrel: 'a barrel roll', helicopter: 'a helicopter', standup: 'surfing on the seat' };
+        this.track(`Attempted ${names[e.kind]}. Did not.`);
+        break;
+      }
+      case 'launch':
+        A.play('trampoline', { vol: 0.9, jitter: 0.03 });
+        A.play('wind-whoosh', { vol: 0.5 });
+        P.emit(24, { x: e.x, y: e.y - 0.4, color: '#f3c01c', speed: 5, life: 0.8, size: 0.35, gravity: 8 });
+        this.scene.shake(0.2);
+        this.line('launch');
+        this.track('Launched by municipal springboard');
+        break;
+      case 'toss':
+        A.play('pickup', { vol: 0.6, rate: 0.8 });
+        break;
+      case 'catch':
+        this.hud.trickCall('SIGNED, SEALED, CAUGHT', e.points, 1);
+        A.play('box-thump-2', { vol: 0.7 });
+        A.play('reward', { vol: 0.4, jitter: 0 });
+        this.line('catch');
         break;
       case 'shortcut':
         this.line('shortcut_taken');

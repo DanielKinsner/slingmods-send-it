@@ -1,11 +1,12 @@
-// Score model (initial, testable). A perfect standard run caps at 10,000
-// before the optional flamingo bonus.
+// Score model. Style cap raised from the plan's 2,500 to 4,000 once air tricks
+// became a core loop; delivery still dominates (a failed run scores 0).
+// A perfect standard run caps at 11,500 before the optional flamingo bonus.
 
 export const SCORE = {
   perParcel: 1000,
   conditionMax: 200,
   timeMax: 1500,
-  styleCap: 2500,
+  styleCap: 4000,
   flamingo: 300,
   cleanThreshold: 0.8,
 };

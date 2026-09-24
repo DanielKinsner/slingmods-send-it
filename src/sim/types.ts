@@ -94,7 +94,8 @@ export interface Rect {
 
 export interface CourseZone extends Rect {
   id: string;
-  kind: 'shortcut' | 'prompt' | 'stunt';
+  /** 'launch' = springboard; its `bonus` is the launch speed (m/s). */
+  kind: 'shortcut' | 'prompt' | 'stunt' | 'launch';
   text?: string;
   /** For prompts: the control lesson this teaches (suppressed once learned). */
   lesson?: 'throttle' | 'brake' | 'pitch' | 'deliver';
