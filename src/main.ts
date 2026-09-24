@@ -45,6 +45,8 @@ const BASE = import.meta.env.BASE_URL;
 const LOGO_URL = `${BASE}assets/brand/slingmods-logo-main.png`;
 const PARAMS = new URLSearchParams(location.search);
 const DEBUG_BOT = PARAMS.get('bot');
+// Developer toggle: ?inspect=slingshot|ryker|spyder shows the real model under neutral light.
+const INSPECT = PARAMS.get('inspect') as Build['vehicle'] | null;
 // Developer toggle for throttled preview panes: allow larger catch-up per frame.
 const MAX_FRAME_DT = Math.min(1, Number(PARAMS.get('dtmax')) || 0.1);
 const MAX_STEPS = Math.ceil(MAX_FRAME_DT / (1 / 120)) + 4;
@@ -137,9 +139,13 @@ class Game {
       this.applySettings({});
       window.addEventListener('resize', () => this.scene.resize());
       this.course = courseById(this.save.lastCourse);
-      load.set(0.8, 'Painting the signs…');
-      await new Promise((r) => setTimeout(r, 30));
+      if (INSPECT && INSPECT in VEHICLES) {
+        this.save.build = { ...this.save.build, vehicle: INSPECT, paint: 0 };
+        this.ui.style.display = 'none';
+      }
+      load.set(0.7, `Rolling out the ${VEHICLES[this.save.build.vehicle].name}…`);
       this.startAttract();
+      await this.scene.setBuild(this.save.build); // real model; throws a diagnostic if missing
       load.set(1, 'Ready');
       this.bindInput();
       document.addEventListener('visibilitychange', () => {
@@ -239,7 +245,7 @@ class Game {
     this.run?.dispose();
     this.course = course;
     this.scene.setCourse(course);
-    this.scene.setBuild(build);
+    this.vehicleLoad = this.scene.setBuild(build).catch((e) => this.fatal(e as Error));
     this.scene.resetCargo();
     const run = new Run(this.rapier, course, build, { assist });
     run.learned = { ...this.save.lessons };
@@ -263,9 +269,24 @@ class Game {
     this.scene.framing = 'attract';
     const course = COURSES[0];
     this.attractPlan++;
-    const vehicles: Build['vehicle'][] = ['slingshot', 'spyder', 'ryker'];
-    this.makeRun(course, { ...this.save.build, vehicle: vehicles[this.attractPlan % 3], preset: 'sensible' }, false);
+    // The attract loop uses the player's current vehicle: no extra downloads.
+    this.makeRun(course, { ...this.save.build, preset: 'sensible' }, false);
     this.attractTimer = 0;
+  }
+
+  vehicleLoad: Promise<void> = Promise.resolve();
+
+  /** A required asset is missing: say exactly what, never substitute. */
+  fatal(e: Error) {
+    console.error(e);
+    const el = document.createElement('div');
+    el.className = 'screen menu scrim';
+    el.innerHTML = `<div class="panel stack"><div class="kicker" style="color:var(--red)">Asset diagnostic</div><h2>VEHICLE NOT LOADED</h2>
+      <p>${e.message.replace(/</g, '&lt;')}</p>
+      <p class="muted">SEND IT uses the real SlingMods vehicle models from <b>public/assets/vehicles/</b>. Re-run <kbd>npm run import-vehicles</kbd> against a Three-Wheel Tour checkout, then reload.</p>
+      <button class="btn primary" data-act="reload"><span>RELOAD</span></button></div>`;
+    el.querySelector('[data-act="reload"]')!.addEventListener('click', () => location.reload());
+    this.show(el, 'loading');
   }
 
   startGarage() {
@@ -285,7 +306,17 @@ class Game {
     this.garageMode = false;
     this.scene.framing = 'run';
     this.makeRun(course, this.save.build, this.save.settings.autoBalance);
-    this.enterRun();
+    if (this.scene.vehicleReady) this.enterRun();
+    else {
+      // Changing vehicle can load its model; repeating an attempt never does.
+      const wait = S.loadingScreen();
+      wait.set(0.6, `Rolling out the ${VEHICLES[this.save.build.vehicle].name}…`);
+      this.show(wait.root, 'loading');
+      const run = this.run;
+      this.vehicleLoad.then(() => {
+        if (this.run === run && this.mode === 'loading' && this.scene.vehicleReady) this.enterRun();
+      });
+    }
     this.audio.play('go', { vol: 0.5, jitter: 0 });
   }
 
@@ -442,6 +473,10 @@ class Game {
     this.input.pollPad(dt);
     const run = this.run;
     if (!run || !this.scene) return;
+    if (INSPECT) {
+      this.scene.inspect(Number(PARAMS.get('yaw') ?? 60) + (PARAMS.has('spin') ? this.clock * 20 : 0), Number(PARAMS.get('pitch') ?? 12), Number(PARAMS.get('dist') ?? 6.5));
+      return;
+    }
 
     const simulate = this.mode !== 'paused' && this.mode !== 'loading' && !(this.mode === 'settings' && !this.attract && !this.garageMode);
     let input: InputState = NO_INPUT;

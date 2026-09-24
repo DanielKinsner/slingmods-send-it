@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "asset": "/assets/model02/slingshot-2026.glb",
+  "basis": "game metres +X right +Y up -Z forward",
+  "wheelCenter": [
+    0,
+    0.3455,
+    1.3335
+  ],
+  "armPivot": [
+    0.215,
+    0.35,
+    0.78
+  ],
+  "armHub": [
+    0.215,
+    0.3455,
+    1.3335
+  ],
+  "shockUpper": [
+    0.215,
+    0.766,
+    0.982
+  ],
+  "shockLower": [
+    0.215,
+    0.525,
+    1.22
+  ],
+  "groups": {
+    "arm": "rear_arm_visual",
+    "belt": "belt_visual",
+    "axle": "rear_axle_visual",
+    "caliper": "rear_caliper_visual",
+    "shockBody": "shock_body_visual",
+    "shockPiston": "shock_piston_visual",
+    "shockSpring": "shock_spring_visual"
+  },
+  "storageEnvelopes": [],
+  "authorEstimate": true,
+  "provenance": "Measured visible 2026 source hardpoints adapted to unchanged game contacts; no physical suspension redesign",
+  "drivePulley": {
+    "node": "drive_pulley_spin",
+    "center": [
+      0.2720798850059509,
+      0.298444926738739,
+      0.6617550849914551
+    ],
+    "spinRatio": 1.8674827791284998
+  }
+}

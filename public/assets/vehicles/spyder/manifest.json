@@ -1,0 +1,96 @@
+{
+  "vehicleId": "can-am-spyder-f3",
+  "revision": "spyder-f3-v1",
+  "visualYear": null,
+  "referenceYear": 2023,
+  "referenceTrim": "US base F3 SE6",
+  "scale": 0.008541972297919004,
+  "sourceToRuntime": [
+    [
+      -0.008541972297919004,
+      0,
+      0,
+      -0.1559624907451554
+    ],
+    [
+      0,
+      0,
+      0.008541972297919004,
+      0.60081243453258
+    ],
+    [
+      0,
+      0.008541972297919004,
+      0,
+      -0.1544171198268774
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ]
+  ],
+  "wheelbase": 1.709,
+  "wheels": [
+    {
+      "id": "front_left",
+      "center": [
+        -0.6858193278312683,
+        0.3235498368740082,
+        -0.8545513153076172
+      ],
+      "radius": 0.3235498370102718,
+      "width": 0.204194993584524
+    },
+    {
+      "id": "front_right",
+      "center": [
+        0.6858189702033997,
+        0.3235498368740082,
+        -0.8545513153076172
+      ],
+      "radius": 0.3235498370102718,
+      "width": 0.204194993584524
+    },
+    {
+      "id": "rear",
+      "center": [
+        2.562591703281214e-07,
+        0.3235498368740082,
+        0.8544999957084656
+      ],
+      "radius": 0.3235498370102718,
+      "width": 0.27313896039548785
+    }
+  ],
+  "notes": [
+    "Uniform wheelbase calibration; source custom tires radius 0.3236 m differs from nominal OEM front 0.28125 / rear 0.303 m.",
+    "Native importer rotates original XY by 180 degrees; transformation applied once to local vertices.",
+    "No unused LOD or compression decoder."
+  ],
+  "triangles": 957915,
+  "runtime": "/assets/spyder/spyder-f3.glb",
+  "masters": [
+    ".tools/spyder/Spyder-Calibrated-Master.blend",
+    ".tools/spyder/Spyder-Game-Master.blend"
+  ],
+  "barPivot": [
+    -0.0,
+    0.9766592383384705,
+    -0.34234049916267395
+  ],
+  "grips": [
+    [
+      -0.4805574417114258,
+      1.1816664934158325,
+      -0.16723008453845978
+    ],
+    [
+      0.4761434495449066,
+      1.1816664934158325,
+      -0.16723008453845978
+    ]
+  ],
+  "instrumentation": "Additive original SIM speed/RPM faces and LCD; original purchased dial art retained beneath overlays."
+}

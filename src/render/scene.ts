@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { Build, CourseSpec } from '../sim/types';
-import { applyBuild } from '../data/vehicles';
+import { PAINTS, applyBuild } from '../data/vehicles';
+import { M } from './materials';
 import { CARGO } from '../data/cargo';
 import { buildCourse, THEMES, type CourseVisual } from './courseModel';
 import { buildVehicle, poseVehicle, type VehicleVisual } from './vehicleModel';
@@ -146,17 +147,46 @@ export class GameScene {
     this.camInit = false;
   }
 
-  setBuild(build: Build) {
+  /**
+   * Load (once, cached) and show the real vehicle model for this build.
+   * Rejects with a diagnostic if a required model is missing: there is no
+   * substitute vehicle.
+   */
+  async setBuild(build: Build): Promise<void> {
     const key = `${build.vehicle}:${build.paint}`;
-    if (key !== this.vehicleKey) {
-      if (this.vehicle) {
-        this.scene.remove(this.vehicle.root);
-        this.vehicle.dispose();
-      }
-      this.vehicle = buildVehicle(applyBuild(build));
-      this.vehicleKey = key;
-      this.scene.add(this.vehicle.root);
+    this.ensureCargo();
+    if (key === this.vehicleKey) return this.pendingVehicle ?? undefined;
+    this.vehicleKey = key;
+    // Never pose the previous vehicle on the new simulation.
+    if (this.vehicle) this.vehicle.root.visible = false;
+    const p = this.loadVehicle(build, key);
+    this.pendingVehicle = p;
+    return p;
+  }
+
+  private pendingVehicle: Promise<void> | null = null;
+
+  private async loadVehicle(build: Build, key: string) {
+    const spec = applyBuild(build);
+    const paint = PAINTS[build.paint]?.body || null;
+    const vis = await buildVehicle(spec, paint);
+    if (this.vehicleKey !== key) {
+      vis.dispose();
+      return;
     }
+    if (this.vehicle) {
+      this.scene.remove(this.vehicle.root);
+      this.vehicle.dispose();
+    }
+    this.vehicle = vis;
+    this.scene.add(vis.root);
+  }
+
+  get vehicleReady() {
+    return !!this.vehicle && this.vehicleKey.startsWith(this.vehicle.id + ':');
+  }
+
+  private ensureCargo() {
     if (!this.cargo.length) {
       for (const spec of CARGO) {
         const c = buildCargo(spec, this.logo);
@@ -177,10 +207,17 @@ export class GameScene {
   /** The helmet leaves the rider (visual only). In water, it floats. */
   popHelmet(vx: number) {
     if (!this.vehicle || this.helmet || this.settings.reducedMotion) return;
-    const head = this.vehicle.rider.head;
-    const wp = head.getWorldPosition(new THREE.Vector3());
-    const clone = head.clone(true);
-    head.visible = false;
+    const wp = this.vehicle.helmetAnchor.getWorldPosition(new THREE.Vector3());
+    if (this.vehicle.headVisual) this.vehicle.headVisual.visible = false;
+    // The rider's head is skinned to the rig, so the flying helmet is a
+    // matching loose prop rather than the bound mesh itself.
+    const clone = new THREE.Group();
+    const shell = new THREE.Mesh(new THREE.SphereGeometry(0.17, 24, 18), M.paint('#1d1e22'));
+    shell.scale.set(1.08, 1, 0.95);
+    const visor = new THREE.Mesh(new THREE.SphereGeometry(0.172, 24, 12, -0.9, 1.8, 1.05, 0.75), M.visor());
+    visor.rotation.y = Math.PI / 2;
+    clone.add(shell, visor);
+    clone.traverse((o) => ((o as THREE.Mesh).castShadow = true));
     clone.position.copy(wp);
     clone.position.z = 0.6;
     this.scene.add(clone);
@@ -219,7 +256,7 @@ export class GameScene {
       this.scene.remove(this.helmet.obj);
       this.helmet = null;
     }
-    if (this.vehicle) this.vehicle.rider.head.visible = true;
+    if (this.vehicle?.headVisual) this.vehicle.headVisual.visible = true;
     for (const c of this.cargo) {
       if (c.damagedApplied) {
         const fresh = buildCargo(c.spec, this.logo);
@@ -318,8 +355,11 @@ export class GameScene {
     const v = run.vehicle;
     const vel = v.chassis.linvel();
     const garage = this.framing === 'garage';
-    const lookAhead = garage ? 0 : THREE.MathUtils.clamp(vel.x * 0.55, -3, 9) + (this.framing === 'attract' ? 2 : 3);
-    const desiredZoom = garage ? 9.5 : THREE.MathUtils.clamp(16.5 + Math.abs(vel.x) * 0.2 + (v.airborne ? 3 : 0), 16.5, 26);
+    // Frame by visible width in metres so any window shape reads the same.
+    const width = garage ? 9 : THREE.MathUtils.clamp(17 + Math.abs(vel.x) * 0.35 + (v.airborne ? 3 : 0), 17, 27);
+    const halfV = THREE.MathUtils.degToRad(this.camera.fov / 2);
+    const desiredZoom = width / (2 * this.camera.aspect * Math.tan(halfV));
+    const lookAhead = garage ? 0 : THREE.MathUtils.clamp(vel.x * 0.28, -2, width * 0.2) + 1.5;
     this.zoom += (desiredZoom - this.zoom) * Math.min(1, dt * (garage ? 4 : 1.2));
 
     const tx = x + lookAhead;
@@ -358,6 +398,48 @@ export class GameScene {
     this.sun.position.set(this.camTarget.x + sd[0] * 60, this.camTarget.y + sd[1] * 60, sd[2] * 60);
     this.sun.target.position.set(this.camTarget.x, this.camTarget.y - 2, 0);
   }
+
+  /**
+   * Developer inspection: the loaded vehicle alone under neutral light on a
+   * grey sweep, orbiting camera. Used to verify the real assets.
+   */
+  inspect(yawDeg: number, pitchDeg = 12, dist = 6.5) {
+    const v = this.vehicle;
+    if (!v) return;
+    if (!this.inspectBg) {
+      this.inspectBg = new THREE.Mesh(new THREE.CylinderGeometry(30, 30, 30, 48, 1, true), new THREE.MeshStandardMaterial({ color: '#8d8f94', side: THREE.BackSide, roughness: 1 }));
+      const floor = new THREE.Mesh(new THREE.CircleGeometry(30, 48), new THREE.MeshStandardMaterial({ color: '#9a9ca1', roughness: 0.9 }));
+      floor.rotation.x = -Math.PI / 2;
+      floor.receiveShadow = true;
+      this.inspectBg.add(floor);
+      floor.position.y = -14.99;
+      this.inspectBg.position.y = 15;
+      this.scene.add(this.inspectBg);
+    }
+    this.course?.root && (this.course.root.visible = false);
+    for (const c of this.cargo) c.root.visible = false;
+    for (const s of this.shadows) s.visible = false;
+    v.deck.visible = false;
+    this.scene.fog = null;
+    this.sun.color.set('#ffffff');
+    this.sun.intensity = 2.2;
+    this.hemi.color.set('#ffffff');
+    this.hemi.groundColor.set('#777777');
+    this.renderer.toneMappingExposure = 1;
+    const yc = v.spec.rear.radius - v.spec.rear.y;
+    poseVehicle(v, 0, yc, 0, [
+      { x: v.spec.rear.x, y: v.spec.rear.y, spin: 0 },
+      { x: v.spec.front.x, y: v.spec.front.y, spin: 0 },
+    ], 0);
+    const yaw = THREE.MathUtils.degToRad(yawDeg);
+    const pitch = THREE.MathUtils.degToRad(pitchDeg);
+    this.camera.position.set(Math.sin(yaw) * Math.cos(pitch) * dist, 0.7 + Math.sin(pitch) * dist, Math.cos(yaw) * Math.cos(pitch) * dist);
+    this.camera.lookAt(0, 0.7, 0);
+    this.sun.position.set(-4, 8, 6);
+    this.sun.target.position.set(0, 0, 0);
+    this.renderer.render(this.scene, this.camera);
+  }
+  private inspectBg: THREE.Mesh | null = null;
 
   /** Project a world point to CSS pixels (for HUD callouts). */
   toScreen(x: number, y: number, z = 0): [number, number] {

@@ -1,0 +1,118 @@
+{
+  "sourceRepository": "DanielKinsner/slingmods-three-wheel-tour-rebuild",
+  "sourceRevision": "a3b6384a3c0e07a4da29866a655399597b87fbc7",
+  "importedAt": "2026-09-24T22:40:13.253Z",
+  "note": "Read-only import. Rider is an owner-purchased rigged character; vehicles per source manifests. Public redistribution rights not established by this import.",
+  "files": [
+    {
+      "vehicle": "slingshot",
+      "source": "public/assets/model02/slingshot-2026.glb",
+      "sourceSha256": "bec730a830e0a269cf0ec5cc20c894fbfe9e68e4cbeebfa78d6aedb6a18712d0",
+      "sourceBytes": 8664196,
+      "runtime": "assets/vehicles/slingshot/slingshot-2026.glb",
+      "runtimeSha256": "b4a11108a2c7b74b8412cdd36b139537fd8998bb0779f92522df69fcd54f6927",
+      "runtimeBytes": 5373344,
+      "edit": "dedup + prune(keepLeaves) + quantize + meshopt (no decimation)"
+    },
+    {
+      "vehicle": "slingshot",
+      "source": "public/assets/model02/rear-rig.json",
+      "sourceSha256": "65a9a5551583014e9edc9a36084cc581036dc9b9dfc01a031e87b63acc0ff4b7",
+      "sourceBytes": 1076,
+      "runtime": "assets/vehicles/slingshot/rear-rig.json",
+      "runtimeSha256": "65a9a5551583014e9edc9a36084cc581036dc9b9dfc01a031e87b63acc0ff4b7",
+      "runtimeBytes": 1076,
+      "edit": "copied unchanged"
+    },
+    {
+      "vehicle": "ryker",
+      "source": "public/assets/ryker/complete/ryker-900-complete.glb",
+      "sourceSha256": "e39ae08ad76230597e68e643b4b5019ded82884bfa32956cdfa5b06c53c4b4c0",
+      "sourceBytes": 17472424,
+      "runtime": "assets/vehicles/ryker/ryker-900-complete.glb",
+      "runtimeSha256": "14a60220c28dd1c297f801131571ae72bc2f3a60106c25fb54c30c54583e9f95",
+      "runtimeBytes": 5903380,
+      "edit": "dedup + prune(keepLeaves) + quantize + meshopt (no decimation)"
+    },
+    {
+      "vehicle": "ryker",
+      "source": "public/assets/ryker/rear-rig.json",
+      "sourceSha256": "5793a203a95d966c2fdf8182fdfca115fc0d375823f9843078787162c440d0f5",
+      "sourceBytes": 408,
+      "runtime": "assets/vehicles/ryker/rear-rig.json",
+      "runtimeSha256": "5793a203a95d966c2fdf8182fdfca115fc0d375823f9843078787162c440d0f5",
+      "runtimeBytes": 408,
+      "edit": "copied unchanged"
+    },
+    {
+      "vehicle": "spyder",
+      "source": "public/assets/spyder/spyder-f3.glb",
+      "sourceSha256": "f1d002b9dcab77cd58443d33b861f6a814c735fa2852c438f40faf98ba537a90",
+      "sourceBytes": 31088620,
+      "runtime": "assets/vehicles/spyder/spyder-f3.glb",
+      "runtimeSha256": "6e5c77b53e2af88ef40635103b70edf9b0ebcbfc346d7b0933ce755213ded9a1",
+      "runtimeBytes": 13610536,
+      "edit": "dedup + prune(keepLeaves) + quantize + meshopt (no decimation)"
+    },
+    {
+      "vehicle": "spyder",
+      "source": "public/assets/spyder/manifest.json",
+      "sourceSha256": "de21a46794a8f3e0aa66ff9ec7f851d28382c061ef5fadd6f67ce60158cc6801",
+      "sourceBytes": 2194,
+      "runtime": "assets/vehicles/spyder/manifest.json",
+      "runtimeSha256": "de21a46794a8f3e0aa66ff9ec7f851d28382c061ef5fadd6f67ce60158cc6801",
+      "runtimeBytes": 2194,
+      "edit": "copied unchanged"
+    },
+    {
+      "vehicle": "rider",
+      "source": "public/assets/drivers/biker/biker-rider.glb",
+      "sourceSha256": "91d6f7b2621ce586497f9bbc5a77c1b2ab7689fdb27814ffbfc82bf385b7b664",
+      "sourceBytes": 1900128,
+      "runtime": "assets/vehicles/rider/biker-rider.glb",
+      "runtimeSha256": "48b045259fd5d2b77a2f40e2c88778f38bda49df196ac2c2badd60c2a0037c4d",
+      "runtimeBytes": 1060180,
+      "edit": "dedup + prune(keepLeaves) + quantize + meshopt (no decimation)"
+    },
+    {
+      "vehicle": "rider",
+      "source": "public/assets/drivers/biker/fit-slingshot.json",
+      "sourceSha256": "ba705ce5a316d828e6fdb410bbd0f619777c87c1f07b738b1111aa409c8dfc84",
+      "sourceBytes": 12460,
+      "runtime": "assets/vehicles/rider/fit-slingshot.json",
+      "runtimeSha256": "ba705ce5a316d828e6fdb410bbd0f619777c87c1f07b738b1111aa409c8dfc84",
+      "runtimeBytes": 12460,
+      "edit": "copied unchanged"
+    },
+    {
+      "vehicle": "rider",
+      "source": "public/assets/drivers/biker/fit-ryker.json",
+      "sourceSha256": "b1e75c63c6b8e5660b2f6f94631fed90b1af683dff84c6570df91853faf968ae",
+      "sourceBytes": 12511,
+      "runtime": "assets/vehicles/rider/fit-ryker.json",
+      "runtimeSha256": "b1e75c63c6b8e5660b2f6f94631fed90b1af683dff84c6570df91853faf968ae",
+      "runtimeBytes": 12511,
+      "edit": "copied unchanged"
+    },
+    {
+      "vehicle": "rider",
+      "source": "public/assets/drivers/biker/fit-spyder.json",
+      "sourceSha256": "e09010d53327e9d2c43ad0643e129fd2ee9aa675978a1ba0ef1baf340ffbc1b5",
+      "sourceBytes": 12529,
+      "runtime": "assets/vehicles/rider/fit-spyder.json",
+      "runtimeSha256": "e09010d53327e9d2c43ad0643e129fd2ee9aa675978a1ba0ef1baf340ffbc1b5",
+      "runtimeBytes": 12529,
+      "edit": "copied unchanged"
+    },
+    {
+      "vehicle": "rider",
+      "source": "public/assets/drivers/biker/manifest.json",
+      "sourceSha256": "e8af0b87297c22e5bc68617fbcd517341c8527420a8863c7ebae067f55f43326",
+      "sourceBytes": 2120,
+      "runtime": "assets/vehicles/rider/manifest.json",
+      "runtimeSha256": "e8af0b87297c22e5bc68617fbcd517341c8527420a8863c7ebae067f55f43326",
+      "runtimeBytes": 2120,
+      "edit": "copied unchanged"
+    }
+  ]
+}

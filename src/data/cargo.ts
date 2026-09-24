@@ -76,7 +76,8 @@ export function layoutCargo(vehicle: VehicleSpec, preset: PresetSpec, cargo: Car
   for (const id of preset.order) {
     const c = byId.get(id);
     if (!c) continue;
-    const fits = rowW + c.w + (row.length ? GAP : 0) <= deckLen + 0.12;
+    // Strict: a row must fit between the rear lip and the headboard.
+    const fits = rowW + c.w + (row.length ? GAP : 0) <= deckLen - 0.04;
     if (row.length >= preset.maxPerRow || (!fits && row.length > 0)) {
       rows.push(row);
       row = [];
@@ -94,6 +95,7 @@ export function layoutCargo(vehicle: VehicleSpec, preset: PresetSpec, cargo: Car
     const width = r.reduce((s, c) => s + c.w, 0) + GAP * (r.length - 1);
     // Upper rows sit toward the front of the row below so the stack reads as a pile.
     let x = deckMid - width / 2 + (width < prevWidth - 0.2 ? 0.08 : 0);
+    x = Math.max(vehicle.deck.x0 + 0.02, Math.min(x, vehicle.deck.x1 - 0.02 - width));
     const h = Math.max(...r.map((c) => c.h));
     for (const c of r) {
       slots.push({ cargoId: c.id, x: x + c.w / 2, y: y + c.h / 2 + 0.005 });
