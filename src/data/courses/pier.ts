@@ -91,7 +91,8 @@ export const PIER: CourseSpec = {
   attract: [-2, 0],
   decor: [
     { kind: 'clouds', x: -250, variant: 14 },
-    { kind: 'hills', x: -150, z: -520, variant: 7 },
+    { kind: 'hills', x: -150, z: -420, variant: 7 },
+    { kind: 'skyline', x: -150, w: 700, z: -230, variant: 8 },
     { kind: 'ferris', x: 150, z: -40, s: 13, y: -1.2 },
     { kind: 'pier', x: -80, w: 90, z: -60, y: -1.4 },
     { kind: 'pier', x: 250, w: 120, z: -70, y: -1.4 },

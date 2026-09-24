@@ -1404,7 +1404,32 @@ function koiPond(d: DecorItem, _ctx: KitContext) {
   return g;
 }
 
+/** Far-off town across the water: simple pastel blocks with lit windows. */
+function skyline(d: DecorItem, _ctx: KitContext) {
+  const g = new THREE.Group();
+  const r = seeded(d.variant ?? 5);
+  const cols = ['#f0dcc4', '#e3eef0', '#f6d6c8', '#fbe9c6', '#d8e8e0', '#f7cfc0', '#e6e0f2'];
+  const w = d.w ?? 500;
+  const z = d.z ?? -240;
+  for (let x = d.x; x < d.x + w; ) {
+    const bw = 14 + r() * 22;
+    const bh = 8 + r() * 30;
+    const tex = windowsTex(`sky${Math.floor(bw)}`, Math.max(2, Math.round(bw / 4)), Math.max(2, Math.round(bh / 5)), cols[Math.floor(r() * cols.length)], '#6f8fa8', 0.1);
+    const m = mesh(new THREE.BoxGeometry(bw, bh, 12), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.9 }), false, false);
+    m.position.set(x + bw / 2, -3 + bh / 2, z - r() * 40);
+    g.add(m);
+    x += bw + 2 + r() * 10;
+  }
+  // Shoreline strip under the town.
+  const shore = mesh(new THREE.PlaneGeometry(w + 200, 60), M.tex('ground-sand-far', sandTex()), false, false);
+  shore.rotation.x = -Math.PI / 2;
+  shore.position.set(d.x + w / 2, -3.05, z + 10);
+  g.add(shore);
+  return g;
+}
+
 const BUILDERS: Record<string, (d: DecorItem, ctx: KitContext) => THREE.Object3D> = {
+  skyline,
   lawnflamingo: lawnFlamingos,
   koipond: koiPond,
   excavator,

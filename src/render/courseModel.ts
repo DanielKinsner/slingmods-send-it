@@ -349,10 +349,12 @@ export function buildCourse(course: CourseSpec, theme: Theme, logo: HTMLImageEle
     band.position.set(course.bounds.x0 + 400, -3.3, -700);
     root.add(band);
     // Beach between the town and the sea.
-    const beach = mesh(new THREE.PlaneGeometry(2400, 70), groundMat('sand'), false, true);
-    beach.rotation.x = -Math.PI / 2;
-    beach.position.set(course.bounds.x0 + 400, -2.2, -70);
-    root.add(beach);
+    if (theme.ground !== 'sea') {
+      const beach = mesh(new THREE.PlaneGeometry(2400, 70), groundMat('sand'), false, true);
+      beach.rotation.x = -Math.PI / 2;
+      beach.position.set(course.bounds.x0 + 400, -2.2, -70);
+      root.add(beach);
+    }
   } else {
     const far = mesh(new THREE.PlaneGeometry(2400, 700), groundMat('grass'), false, true);
     far.rotation.x = -Math.PI / 2;
