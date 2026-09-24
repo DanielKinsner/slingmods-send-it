@@ -8,3 +8,6 @@ screens/tmp/
 # Purchased/third-party model files stay out of the public repo.
 # Rebuild them locally with: npm run import-vehicles
 public/assets/vehicles/**/*.glb
+.vercel/
+
+.vercel

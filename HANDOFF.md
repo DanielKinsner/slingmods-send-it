@@ -25,13 +25,16 @@ preview panes).
 
 ## Deploy (Vercel, from this PC)
 
+Live: **https://slingmods-send-it.vercel.app** (project `daniel-kinsners-projects/slingmods-send-it`).
+
 ```bash
-npm run build
-vercel deploy dist --prod --yes
+vercel build --prod --yes          # runs npm run build locally, models included
+vercel deploy --prebuilt --prod --yes
 ```
 
-`dist/` is a plain static site (relative paths). The Vercel project is **not** connected to GitHub on purpose:
-a Git-triggered build would lack the git-ignored vehicle models.
+The Vercel project is **disconnected from GitHub on purpose** (`vercel git disconnect`): a Git-triggered cloud
+build would lack the git-ignored vehicle models and show the "vehicle not loaded" diagnostic. `.vercel/` is
+git-ignored; on another machine run `vercel link` first (and disconnect Git again if it auto-connects).
 
 ## Verified this session
 
