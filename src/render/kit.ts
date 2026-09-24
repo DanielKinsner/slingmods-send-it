@@ -10,6 +10,7 @@ import {
   corrugatedTex,
   grassTex,
   roofTex,
+  sandTex,
   signTex,
   stuccoTex,
   tileTex,
@@ -1080,7 +1081,284 @@ function frontFill(d: DecorItem, ctx: KitContext) {
   return g;
 }
 
+function excavator(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const base = groundAt(ctx, d.x);
+  const yellow = M.paint('#f3b21c');
+  const dark = M.satin('#2a2c31');
+  // Tracks.
+  for (const z of [-0.9, 0.9]) g.add(boxAt(4.2, 0.8, 0.6, M.rubber(), 0, 0.4, z, 0.35));
+  g.add(boxAt(3.2, 0.9, 2.2, yellow, 0, 1.3, 0, 0.1));
+  g.add(boxAt(1.5, 1.6, 1.5, yellow, -0.6, 2.4, 0.3, 0.1));
+  const glass = boxAt(1.2, 1.1, 1.52, M.glass(), -0.5, 2.55, 0.3, 0.05);
+  g.add(glass);
+  g.add(boxAt(1.2, 0.8, 2.0, dark, -1.4, 1.9, 0, 0.1));
+  // Boom + stick + bucket reaching toward the dig.
+  const boom = boxAt(3.4, 0.4, 0.45, yellow, 1.5, 3.1, -0.3, 0.08);
+  boom.rotation.z = 0.5;
+  g.add(boom);
+  const stick = boxAt(2.4, 0.32, 0.38, yellow, 3.4, 2.9, -0.3, 0.06);
+  stick.rotation.z = -0.9;
+  g.add(stick);
+  const bucket = boxAt(0.8, 0.7, 0.9, dark, 4.1, 1.8, -0.3, 0.1);
+  bucket.rotation.z = 0.4;
+  g.add(bucket);
+  const sticker = signPlane('exc-sticker', 1.6, 0.4, { w: 1.6, h: 0.4, bg: '#1d1e22', fg: '#f3c01c', lines: [{ text: 'HOW’S MY DIGGING?', size: 0.2 }], px: 160 });
+  sticker.position.set(0, 1.35, 1.12);
+  g.add(sticker);
+  g.position.set(d.x, base, d.z ?? -7);
+  g.rotation.y = 0.35;
+  return g;
+}
+
+function sandpile(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const w = d.w ?? 10;
+  const base = groundAt(ctx, d.x - w / 2);
+  const mat = M.tex('sand-pile', sandTex(), { roughness: 1, color: new THREE.Color('#e3c68f') });
+  for (const [zz, s] of [
+    [-3.6, 1],
+    [3.4, 0.7],
+  ] as const) {
+    const m = mesh(new THREE.SphereGeometry(w / 2, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), mat);
+    m.scale.set(1, (2.2 * s) / (w / 2), 0.5);
+    m.position.set(d.x, base, zz);
+    g.add(m);
+  }
+  return g;
+}
+
+function lifeguard(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const base = groundAt(ctx, d.x);
+  const wood = M.tex('lg-wood', woodTex('#d8b98a'));
+  for (const [x, z] of [
+    [-1, -1],
+    [1, -1],
+    [-1, 1],
+    [1, 1],
+  ])
+    g.add(boxAt(0.18, 3.2, 0.18, wood, x, 1.6, z, 0.03));
+  g.add(boxAt(2.6, 0.2, 2.6, wood, 0, 3.2, 0, 0.03));
+  g.add(boxAt(2.4, 1.8, 2.4, M.paint('#d8242b'), 0, 4.2, 0, 0.1));
+  const roof = mesh(new THREE.ConeGeometry(2.2, 1, 4), M.paint('#fbfaf7'));
+  roof.rotation.y = Math.PI / 4;
+  roof.position.y = 5.6;
+  g.add(roof);
+  const s = signPlane('lg-sign', 2.2, 0.5, { w: 2.2, h: 0.5, bg: '#fbfaf7', fg: '#d8242b', lines: [{ text: 'LIFEGUARD (ON BREAK)', size: 0.3 }], px: 128 });
+  s.position.set(0, 4.3, 1.22);
+  g.add(s);
+  g.position.set(d.x, base, d.z ?? -9);
+  return g;
+}
+
+function umbrellas(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const cols = ['#d8242b', '#f3c01c', '#2aa7c9', '#f07aa8', '#7ac98a'];
+  const w = d.w ?? 20;
+  for (let i = 0; i < w / 4; i++) {
+    const x = d.x + i * 4 + (i % 2) * 1.2;
+    const base = groundAt(ctx, x);
+    const z = -6.5 - (i % 3) * 2.2;
+    g.add(boxAt(0.06, 2.4, 0.06, M.metal(), x, base + 1.2, z, 0.02));
+    const shade = mesh(new THREE.ConeGeometry(1.4, 0.55, 10, 1, true), M.plastic(cols[i % cols.length]));
+    (shade.material as THREE.MeshStandardMaterial).side = THREE.DoubleSide;
+    shade.position.set(x, base + 2.4, z);
+    shade.rotation.z = 0.12;
+    g.add(shade);
+    g.add(boxAt(1.8, 0.04, 0.8, M.plastic(['#fbfaf7', '#ffe39a'][i % 2]), x + 0.9, base + 0.05, z + 0.9, 0.02));
+  }
+  return g;
+}
+
+// --- Pier kit -----------------------------------------------------------------
+
+function pilings(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const w = d.w ?? 200;
+  const mat = M.tex('piling', woodTex('#6b5038'), { roughness: 0.95 });
+  for (let x = d.x; x <= d.x + w; x += 5) {
+    const top = groundAt(ctx, x) - 1.3;
+    for (const z of [-2.2, 2.2]) {
+      const p = mesh(new THREE.CylinderGeometry(0.28, 0.32, top + 8, 10), mat);
+      p.position.set(x, (top - 8) / 2, z);
+      g.add(p);
+    }
+    const brace = boxAt(0.18, 0.18, 4.6, mat, x, top - 0.6, 0, 0.02);
+    g.add(brace);
+  }
+  return g;
+}
+
+function pierRail(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const w = d.w ?? 200;
+  const mat = M.tex('rail-wood', woodTex('#caa37a'));
+  for (let x = d.x; x <= d.x + w; x += 2.4) {
+    const b = groundAt(ctx, x) + 0.14;
+    g.add(boxAt(0.12, 1.0, 0.12, mat, x, b + 0.5, -2.45, 0.02));
+  }
+  // Rail segments follow the deck height.
+  for (let x = d.x; x < d.x + w; x += 2.4) {
+    const b0 = groundAt(ctx, x) + 0.14;
+    const b1 = groundAt(ctx, x + 2.4) + 0.14;
+    const seg = boxAt(Math.hypot(2.4, b1 - b0), 0.1, 0.1, mat, x + 1.2, (b0 + b1) / 2 + 1.0, -2.45, 0.02);
+    seg.rotation.z = Math.atan2(b1 - b0, 2.4);
+    g.add(seg);
+  }
+  return g;
+}
+
+function lamp(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const base = groundAt(ctx, d.x) + 0.14;
+  const iron = M.satin('#1f5f5a');
+  g.add(boxAt(0.12, 4.2, 0.12, iron, 0, 2.1, 0, 0.05));
+  const globe = mesh(new THREE.SphereGeometry(0.28, 14, 10), M.emissive('#fff1c8', 1.4));
+  globe.position.y = 4.45;
+  g.add(globe);
+  g.add(boxAt(0.5, 0.08, 0.5, iron, 0, 4.15, 0, 0.02));
+  g.position.set(d.x, base, d.z ?? -3.2);
+  return g;
+}
+
+function lifebuoy(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const base = groundAt(ctx, d.x) + 0.14;
+  g.add(boxAt(0.12, 1.6, 0.12, M.tex('rail-wood', woodTex('#caa37a')), 0, 0.8, 0, 0.02));
+  const ring = mesh(new THREE.TorusGeometry(0.34, 0.1, 10, 20), M.plastic('#f26a1b'));
+  ring.position.y = 1.25;
+  ring.position.z = 0.1;
+  g.add(ring);
+  for (let i = 0; i < 4; i++) {
+    const band = mesh(new THREE.TorusGeometry(0.34, 0.105, 6, 4, 0.35), M.plastic('#fbfaf7'));
+    band.rotation.z = (i * Math.PI) / 2;
+    band.position.copy(ring.position);
+    g.add(band);
+  }
+  g.position.set(d.x, base, d.z ?? -2.9);
+  return g;
+}
+
+function bench(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const base = groundAt(ctx, d.x) + 0.14;
+  const wood = M.tex('bench', woodTex('#b98a5a'));
+  g.add(boxAt(1.8, 0.08, 0.45, wood, 0, 0.45, 0, 0.02));
+  g.add(boxAt(1.8, 0.4, 0.06, wood, 0, 0.72, -0.22, 0.02));
+  for (const s of [-0.8, 0.8]) g.add(boxAt(0.06, 0.45, 0.4, M.satin('#2a2c31'), s, 0.22, 0, 0.01));
+  const plaque = signPlane('bench-plaque', 0.6, 0.12, { w: 0.6, h: 0.12, bg: '#c7a24a', fg: '#1d1e22', lines: [{ text: 'IN MEMORY OF A PARCEL', size: 0.07 }], px: 400 });
+  plaque.position.set(0, 0.8, -0.18);
+  g.add(plaque);
+  g.position.set(d.x, base, d.z ?? -3.5);
+  return g;
+}
+
+/** Snack stand under a drivable roof slab (the slab is the gameplay roof). */
+function stand(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const w = d.w ?? 16;
+  const top = d.y ?? 3.4;
+  const deck = groundAt(ctx, d.x + w / 2) + 0.14;
+  const pal = [
+    ['#d8242b', '#fff4e4'],
+    ['#1f7f8f', '#e8f4f8'],
+    ['#f3c01c', '#fffaf0'],
+  ][(d.variant ?? 0) % 3];
+  // Counter and back wall behind the lower deck.
+  const back = boxAt(w - 1, top - deck - 0.4, 3, M.plastic(pal[1]), d.x + w / 2, deck + (top - deck - 0.4) / 2, -4.2, 0.08);
+  g.add(back);
+  g.add(boxAt(w - 1.4, 1.1, 0.8, M.plastic(pal[0]), d.x + w / 2, deck + 0.55, -2.9, 0.08));
+  // Striped awning edge hanging from the roof slab.
+  const aw = new THREE.Mesh(new THREE.PlaneGeometry(w, 0.7), new THREE.MeshStandardMaterial({ map: awningTex(pal[0], '#fbfaf7'), side: THREE.DoubleSide, roughness: 0.8 }));
+  aw.position.set(d.x + w / 2, top - 0.65, 2.65);
+  g.add(aw);
+  // Posts.
+  for (const x of [d.x + 0.5, d.x + w - 0.5]) for (const z of [-2.6, 2.6]) g.add(boxAt(0.18, top - deck, 0.18, M.satin('#fbfaf7'), x, deck + (top - deck) / 2 - 0.2, z, 0.03));
+  const s = signPlane('stand-' + d.text, Math.min(w - 2, 6), 1.1, { w: Math.min(w - 2, 6), h: 1.1, bg: pal[0], fg: '#fff', lines: [{ text: d.text ?? 'SNACKS', size: 0.6 }], px: 96 });
+  s.position.set(d.x + w / 2, top + 1.3, -2.8);
+  g.add(s);
+  g.add(boxAt(Math.min(w - 2, 6) + 0.2, 1.2, 0.1, M.satin('#2a2c31'), d.x + w / 2, top + 1.3, -2.88, 0.02));
+  for (const px of [-2, 2]) g.add(boxAt(0.1, 1.2, 0.1, M.satin('#2a2c31'), d.x + w / 2 + px, top + 0.6, -2.9, 0.02));
+  return g;
+}
+
+function awningProp(d: DecorItem, _ctx: KitContext) {
+  const g = new THREE.Group();
+  const w = d.w ?? 12;
+  const y = d.y ?? 2.3;
+  const aw = new THREE.Mesh(new THREE.BoxGeometry(w, 0.1, 5.2), new THREE.MeshStandardMaterial({ map: awningTex('#1f5fae', '#fbfaf7'), roughness: 0.8 }));
+  aw.position.set(d.x + w / 2, y + 0.25, 0);
+  aw.castShadow = true;
+  g.add(aw);
+  const fringe = new THREE.Mesh(new THREE.PlaneGeometry(w, 0.35), new THREE.MeshStandardMaterial({ map: awningTex('#1f5fae', '#fbfaf7'), side: THREE.DoubleSide }));
+  fringe.position.set(d.x + w / 2, y - 0.05, 2.62);
+  g.add(fringe);
+  for (const x of [d.x + 0.3, d.x + w - 0.3]) g.add(boxAt(0.14, y + 0.3, 0.14, M.satin('#fbfaf7'), x, (y + 0.3) / 2, -2.55, 0.03));
+  const s = signPlane('awning-sign', 2.6, 0.45, { w: 2.6, h: 0.45, bg: '#fbfaf7', fg: '#1f5fae', lines: [{ text: 'CLEARANCE 2.45 m', size: 0.3 }], px: 160 });
+  s.position.set(d.x + 1.6, y - 0.12, 2.64);
+  g.add(s);
+  return g;
+}
+
+function fishing(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const base = groundAt(ctx, d.x) + 0.14;
+  for (let i = 0; i < 3; i++) {
+    const rod = boxAt(0.04, 3.2, 0.04, M.satin('#2a2c31'), i * 1.4, 1.5, -2.4, 0.01);
+    rod.rotation.x = -0.5;
+    rod.rotation.z = 0.1 * (i - 1);
+    g.add(rod);
+  }
+  g.add(boxAt(0.8, 0.5, 0.5, M.plastic('#1f7f8f'), 0.7, 0.25, -3.3, 0.05));
+  const s = signPlane('bait', 1.4, 0.4, { w: 1.4, h: 0.4, bg: '#fbfaf7', fg: '#1d1e22', lines: [{ text: 'LIVE BAIT (MOSTLY)', size: 0.22 }], px: 200 });
+  s.position.set(0.7, 0.6, -3.04);
+  g.add(s);
+  g.position.set(d.x, base, 0);
+  return g;
+}
+
+function brokenGate(d: DecorItem, ctx: KitContext) {
+  const g = new THREE.Group();
+  const base = groundAt(ctx, d.x) + 0.14;
+  const mat = M.metal('#6b6e75');
+  g.add(boxAt(0.14, 2.2, 0.14, mat, 0, 1.1, -2.5, 0.03));
+  // The gate itself lies flat behind the deck, defeated.
+  const gate = boxAt(2.4, 0.08, 1.6, mat, 1.1, 0.06, -4.2, 0.02);
+  gate.rotation.y = 0.3;
+  g.add(gate);
+  const s = signPlane('gate-sign', 2.2, 0.8, {
+    w: 2.2,
+    h: 0.8,
+    bg: '#fbf8f1',
+    fg: '#1d1e22',
+    border: '#d8242b',
+    lines: [
+      { text: 'GATE CODE: BROKEN', size: 0.22 },
+      { text: 'GATE: ALSO BROKEN', size: 0.22, color: '#d8242b' },
+    ],
+    px: 200,
+  });
+  s.position.set(0, 1.9, -2.4);
+  g.add(s);
+  g.position.set(d.x, base, 0);
+  return g;
+}
+
 const BUILDERS: Record<string, (d: DecorItem, ctx: KitContext) => THREE.Object3D> = {
+  excavator,
+  sandpile,
+  lifeguard,
+  umbrellas,
+  pilings,
+  rail: pierRail,
+  lamp,
+  lifebuoy,
+  bench,
+  stand,
+  awning: awningProp,
+  fishing,
+  gate: brokenGate,
   townfill: townFill,
   frontfill: frontFill,
   warehouse,

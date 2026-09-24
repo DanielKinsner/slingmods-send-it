@@ -83,7 +83,10 @@ export class CargoSystem {
         rapier.RigidBodyDesc.dynamic()
           .setTranslation(wx, wy)
           .setRotation(vehicle.angle)
-          .setCcdEnabled(true)
+          // Hard CCD between parcels and the deck they ride on clamps the whole
+          // vehicle's motion at speed (a sudden invisible "wall"). Soft CCD
+          // predicts contacts without clamping.
+          .setSoftCcdPrediction(0.3)
           .setLinearDamping(0.05)
           .setAngularDamping(0.2),
       );

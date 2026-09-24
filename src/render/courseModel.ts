@@ -18,8 +18,8 @@ export interface Theme {
   fog: string;
   fogNear: number;
   fogFar: number;
-  ground: 'grass' | 'sand' | 'concrete';
-  foreground: 'grass' | 'sand' | 'concrete';
+  ground: 'grass' | 'sand' | 'concrete' | 'sea';
+  foreground: 'grass' | 'sand' | 'concrete' | 'sea';
   roadSurface: 'asphalt' | 'wood';
   ocean: boolean;
   sunDir: [number, number, number];
@@ -56,8 +56,8 @@ export const THEMES: Record<string, Theme> = {
     fog: '#cfe3ec',
     fogNear: 80,
     fogFar: 360,
-    ground: 'sand',
-    foreground: 'sand',
+    ground: 'sea',
+    foreground: 'sea',
     roadSurface: 'wood',
     ocean: true,
     sunDir: [-0.35, 0.78, 0.52],
@@ -83,7 +83,7 @@ export const THEMES: Record<string, Theme> = {
   },
 };
 
-function groundMat(kind: 'grass' | 'sand' | 'concrete') {
+function groundMat(kind: 'grass' | 'sand' | 'concrete' | 'sea') {
   const t = kind === 'grass' ? grassTex() : kind === 'sand' ? sandTex() : concreteTex('#bdb6a8');
   return M.tex('ground-' + kind, t, { roughness: 0.95 });
 }
@@ -254,12 +254,27 @@ export function buildCourse(course: CourseSpec, theme: Theme, logo: HTMLImageEle
     // Flip winding so it faces up.
     back1.geometry.index!.array.reverse();
     back1.geometry.computeVertexNormals();
-    root.add(back1);
+    if (theme.ground !== 'sea') root.add(back1);
 
     // Foreground verge.
     const fgMat = groundMat(theme.foreground);
     const fg = mesh(strip(pts.map((p) => [p[0], p[1] - 0.2] as Vec2), ROAD_HALF + 0.35, ROAD_HALF + 14, 0, -0.6, 6, 2), fgMat, false, true);
-    root.add(fg);
+    if (theme.foreground !== 'sea') root.add(fg);
+  }
+
+  // Open water around a pier.
+  if (theme.ground === 'sea' || theme.foreground === 'sea') {
+    const x0 = course.bounds.x0 - 80;
+    const x1 = course.bounds.x1 + 80;
+    const sea = mesh(new THREE.PlaneGeometry(x1 - x0, 140), waterMaterial('#2f9fbf', '#0b5f7a'), false, true);
+    sea.rotation.x = -Math.PI / 2;
+    sea.position.set((x0 + x1) / 2, -3.15, -40);
+    root.add(sea);
+    const m = sea.material as THREE.MeshPhysicalMaterial;
+    m.opacity = 0.95;
+    updaters.push((t) => {
+      m.sheen = 0.3 + Math.sin(t * 0.9) * 0.1;
+    });
   }
 
   // --- Solids --------------------------------------------------------------
@@ -269,6 +284,7 @@ export function buildCourse(course: CourseSpec, theme: Theme, logo: HTMLImageEle
 
   // --- Water volumes -------------------------------------------------------
   for (const w of course.water) {
+    if (w.x1 - w.x0 > 80) continue; // open sea is drawn above
     const water = mesh(new THREE.BoxGeometry(w.x1 - w.x0, 0.05, 5.0, 1, 1, 1), waterMaterial('#29c4d8', '#0b6f8a'), false, true);
     water.position.set((w.x0 + w.x1) / 2, w.y1 - 0.1, 0);
     root.add(water);

@@ -10,7 +10,9 @@ export const VEHICLES: Record<VehicleId, VehicleSpec> = {
     department: 'The Express Department',
     line: 'Two seats. One questionable business model.',
     traits: ['Long wheelbase', 'Smooth pitch', 'Low nose — clean approaches'],
-    hull: [[-1.68, -0.3], [-1.0, -0.36], [1.9, -0.36], [2.12, -0.15], [1.9, 0.05], [0.6, 0.33], [-0.6, 0.52], [-1.68, 0.52]],
+    // Invisible collision hull (rounded by 0.06 m at runtime). The nose
+    // underside is raised above the real splitter so ramps don't snag it.
+    hull: [[-1.62, -0.24], [-1.0, -0.28], [1.3, -0.28], [1.95, -0.12], [2.0, -0.02], [1.85, 0.05], [0.6, 0.27], [-0.6, 0.46], [-1.62, 0.46]],
     chassisMass: 290,
     com: [0.2, -0.1],
     inertiaScale: 1.0,
@@ -32,7 +34,7 @@ export const VEHICLES: Record<VehicleId, VehicleSpec> = {
     department: 'The Shortcut Department',
     line: 'Small shipment. Large incident report.',
     traits: ['Short wheelbase', 'Quick pitch', 'Tall, twitchy stack'],
-    hull: [[-1.2, -0.2], [-0.6, -0.33], [0.9, -0.33], [1.14, -0.1], [1.0, 0.3], [0.3, 0.35], [-1.2, 0.3]],
+    hull: [[-1.14, -0.16], [-0.6, -0.27], [0.7, -0.27], [1.05, -0.06], [0.95, 0.24], [0.3, 0.29], [-1.14, 0.24]],
     chassisMass: 225,
     com: [0.1, -0.05],
     inertiaScale: 0.85,
@@ -54,7 +56,7 @@ export const VEHICLES: Record<VehicleId, VehicleSpec> = {
     department: 'The Cargo Department',
     line: 'The responsible option has also found the ramp.',
     traits: ['Heavy & planted', 'Calm cargo deck', 'Slow to rotate'],
-    hull: [[-1.3, -0.25], [-0.6, -0.4], [1.2, -0.4], [1.42, -0.15], [1.3, 0.3], [0.5, 0.45], [-1.3, 0.42]],
+    hull: [[-1.24, -0.2], [-0.6, -0.32], [1.0, -0.32], [1.34, -0.08], [1.24, 0.24], [0.5, 0.39], [-1.24, 0.36]],
     chassisMass: 360,
     com: [0.15, -0.1],
     inertiaScale: 1.3,

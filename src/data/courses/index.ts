@@ -1,8 +1,9 @@
 import type { CourseSpec } from '../../sim/types';
 import { SUNSET } from './sunset';
+import { PIER } from './pier';
 import { validateCourse } from './build';
 
-export const COURSES: CourseSpec[] = [SUNSET];
+export const COURSES: CourseSpec[] = [SUNSET, PIER];
 
 for (const c of COURSES) {
   const errs = validateCourse(c);

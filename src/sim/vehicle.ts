@@ -54,7 +54,8 @@ export class VehicleSim {
 
     const bodyDesc = rapier.RigidBodyDesc.dynamic()
       .setTranslation(x, y)
-      .setCcdEnabled(true)
+      // Soft CCD: hard CCD against the parcels riding on the deck clamps motion.
+      .setSoftCcdPrediction(0.5)
       .setLinearDamping(0.02)
       .setAngularDamping(0.15);
     this.chassis = world.createRigidBody(bodyDesc);
@@ -63,7 +64,9 @@ export class VehicleSim {
     const L = Math.max(...spec.hull.map((p) => p[0])) - Math.min(...spec.hull.map((p) => p[0]));
     const H = Math.max(...spec.hull.map((p) => p[1])) - Math.min(...spec.hull.map((p) => p[1]));
     const inertia = ((spec.chassisMass * (L * L + H * H)) / 12) * spec.inertiaScale;
-    const hullDesc = rapier.ColliderDesc.convexHull(hullPts)!
+    // Rounded hull: a sharp corner sliding along a polyline snags on the joints
+    // between segments ("ghost" walls). The radius is small and invisible.
+    const hullDesc = (rapier.ColliderDesc.roundConvexHull(hullPts, 0.06) ?? rapier.ColliderDesc.convexHull(hullPts)!)
       .setMassProperties(spec.chassisMass, { x: spec.com[0], y: spec.com[1] }, inertia)
       .setFriction(0.6)
       .setRestitution(0.05)
