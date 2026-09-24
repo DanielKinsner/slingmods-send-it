@@ -180,6 +180,11 @@ class Game {
       buy: (item, cost) => this.buy(item, cost),
       owns: (item) => this.save.owned.includes(item),
       bounceTest: () => this.bounceTest(),
+      bark: (event) => {
+        const pool = BARKS.filter((b) => b.event === event);
+        const b = pool[Math.floor(Math.random() * pool.length)];
+        if (b) this.audio.say(b.id);
+      },
       applySettings: (s) => this.applySettings(s),
       sfx: (id) => this.audio.play(id, { vol: 0.5, jitter: 0 }),
       isTouch: () => this.touchWanted(),
@@ -343,6 +348,9 @@ class Game {
     this.setTouch(this.touchWanted());
     this.dispatch.newRun();
     this.runFlags.clear();
+    this.honks = 0;
+    this.recoveries.clear();
+    this.idleT = this.reverseT = this.crawlT = 0;
     this.resultDelay = -1;
     this.lastResult = null;
     this.audio.stopVoice();
@@ -442,7 +450,11 @@ class Game {
         if (this.mode === 'garage' || this.mode === 'contracts') return this.toTitle();
         if (this.mode === 'settings') return (this.layer?.querySelector('[data-act="back"]') as HTMLElement | null)?.click();
       }
-      if (a === 'horn' && this.mode === 'run') this.audio.play('honk', { vol: 0.6 });
+      if (a === 'horn' && this.mode === 'run') {
+        this.audio.play('honk', { vol: 0.6 });
+        this.honks++;
+        if (this.honks === 3) this.line('honk', true);
+      }
       if (this.mode === 'run') return;
       if (a === 'up' || a === 'down' || a === 'left' || a === 'right') this.moveFocus(a === 'up' || a === 'left' ? -1 : 1);
       if (a === 'confirm') {
@@ -688,6 +700,12 @@ class Game {
         A.play(hard ? 'land-hard' : 'land-soft', { vol: Math.min(1, 0.35 + e.jolt / 10), minGap: 0.2 });
         P.emit(hard ? 18 : 8, { x: e.x, y: e.y - 0.5, color: '#d9c7a8', speed: 1.5 + e.jolt * 0.3, life: 0.9, size: 0.9, grow: 2.2, alpha: 0.5 });
         if (hard) this.scene.shake(Math.min(0.45, e.jolt * 0.035));
+        if (e.jolt > 8 && !this.runFlags.has('hardland')) {
+          this.runFlags.add('hardland');
+          setTimeout(() => {
+            if (this.run === run && run.phase === 'running') this.line('hard_landing');
+          }, 600);
+        }
         break;
       }
       case 'stunt-pending':
@@ -807,6 +825,15 @@ class Game {
         if (c.kind === 'flamingo') this.line('flamingo_lost');
         else this.line('cargo_became_loose');
         this.track(`${PARCEL_NAMES[c.id]} left the vehicle`);
+        if (run.vehicle.position.x < run.course.start[0] + 30 && !this.runFlags.has('early')) {
+          this.runFlags.add('early');
+          this.line('early_loss', true);
+        }
+        if (run.course.id === 'pier' && c.x > 136 && c.x < 154 && c.y > 1.6 && !this.runFlags.has('awning')) {
+          this.runFlags.add('awning');
+          this.line('awning_hit', true);
+          this.track('Parcel introduced to the awning');
+        }
         if (!this.runFlags.has('recover-hint2')) {
           this.runFlags.add('recover-hint2');
           setTimeout(() => {
@@ -831,6 +858,8 @@ class Game {
         A.play('box-thump-1', { vol: 0.6 });
         this.line('cargo_recovered');
         this.track(`${PARCEL_NAMES[c.id]} re-boarded (local pickup)`);
+        if (this.recoveries.get(c.id)) this.line('recovered_again', true);
+        this.recoveries.set(c.id, (this.recoveries.get(c.id) ?? 0) + 1);
         break;
     }
   }
@@ -838,6 +867,7 @@ class Game {
   ambientChecks(run: Run) {
     if (this.mode !== 'run' || run.phase !== 'running') return;
     const v = run.vehicle;
+    this.noticeBehaviour(run);
     // Proof-of-delivery photo at the apex of the biggest jump.
     const vy = v.chassis.linvel().y;
     if (v.airborne && this.prevVy > 0 && vy <= 0) {
@@ -873,6 +903,41 @@ class Game {
     if (this.lastInput.throttle > 0.8 && v.contacts.rear && v.speed < 12 && Math.random() < 0.25) {
       const [wx, wy] = v.toWorld(v.spec.rear.x - 0.3, v.spec.rear.y - v.spec.rear.radius + 0.1);
       this.scene.particles.emit(1, { x: wx, y: wy, color: '#d9c7a8', vx: -2, speed: 0.8, life: 0.7, size: 0.5, grow: 2, alpha: 0.35, zSpread: 0.6 });
+    }
+  }
+
+  honks = 0;
+  recoveries = new Map<string, number>();
+  private idleT = 0;
+  private reverseT = 0;
+  private crawlT = 0;
+
+  /** The dispatcher notices what you are actually doing. Once per run each. */
+  noticeBehaviour(run: Run) {
+    const v = run.vehicle;
+    const p = v.position;
+    const dt = 1 / 60;
+    const d = run.course.delivery;
+    const nearBay = p.x > d.x0 - 30 && p.x < d.x1 + 5;
+    const once = (flag: string, event: string, cond: boolean, force = false) => {
+      if (cond && !this.runFlags.has(flag)) {
+        this.runFlags.add(flag);
+        this.line(event, force);
+      }
+    };
+    this.idleT = v.speed < 0.3 && run.time > 3 && !nearBay ? this.idleT + dt : 0;
+    once('idle', 'idle', this.idleT > 6, true);
+    this.reverseT = v.reverse && v.forwardSpeed < -1.2 ? this.reverseT + dt : 0;
+    once('reverse', 'reverse', this.reverseT > 1);
+    this.crawlT = v.speed > 0.3 && v.speed < 3.5 && !nearBay && !run.cargo.items.some((i) => i.pickup) ? this.crawlT + dt : 0;
+    once('crawl', 'crawl', this.crawlT > 9, true);
+    once('top', 'top_speed', v.forwardSpeed > v.spec.drive.topSpeed * 0.93);
+    once('bayfast', 'near_bay_fast', nearBay && p.x < d.x0 - 5 && v.speed > 15);
+    const c = run.cargo.counts();
+    once('last', 'last_parcel', c.onboard === 1 && c.lost + c.loose >= 4, true);
+    if (run.course.id === 'sunset') {
+      once('rumble', 'rumble', p.x > 133 && p.x < 140);
+      once('dig', 'dig_site', p.x > 110 && p.x < 120 && p.y < -0.6);
     }
   }
 

@@ -5,6 +5,7 @@ import type { Build, CourseSpec, PresetId, VehicleId } from '../sim/types';
 import { PAINTS, RESTRAINTS, SUSPENSION, TIRES, VEHICLES, VEHICLE_ORDER } from '../data/vehicles';
 import { CARGO, PRESETS, PRESET_ORDER } from '../data/cargo';
 import { fmtTime } from './hud';
+import { HOLD_MUSIC, LOADING_QUIPS, REVIEWS } from '../data/humor';
 
 export interface ScreenApi {
   save: SaveData;
@@ -22,6 +23,8 @@ export interface ScreenApi {
   buy(item: string, cost: number): boolean;
   owns(item: string): boolean;
   bounceTest(): void;
+  /** Dispatcher voice bark for a UI moment (vehicle picks, purchases...). */
+  bark(event: string): void;
   applySettings(s: Partial<Settings>): void;
   sfx(id: 'ui-select' | 'ui-back' | 'ui-focus'): void;
   isTouch(): boolean;
@@ -49,7 +52,8 @@ function bind(root: HTMLElement, map: Record<string, () => void>, api: ScreenApi
 }
 
 export function loadingScreen(): { root: HTMLElement; set(p: number, text?: string): void; error(msg: string, retry: () => void): void } {
-  const root = h(`<div class="screen loading"><div class="kicker">SlingMods Arcade</div><h1 style="font-size:3em;color:var(--yellow);font-style:italic">SEND IT</h1><div class="bar"><i></i></div><div class="muted status">Loading the truck…</div></div>`);
+  const root = h(`<div class="screen loading"><div class="kicker">SlingMods Arcade</div><h1 style="font-size:3em;color:var(--yellow);font-style:italic">SEND IT</h1><div class="bar"><i></i></div><div class="muted status">Loading the truck…</div><div class="muted quip" style="font-style:italic;font-size:.9em"></div></div>`);
+  root.querySelector('.quip')!.textContent = LOADING_QUIPS[Math.floor(Math.random() * LOADING_QUIPS.length)];
   return {
     root,
     set(p, text) {
@@ -116,6 +120,7 @@ export function pauseScreen(api: ScreenApi): HTMLElement {
       <div class="panel stack">
         <div class="kicker">Delivery paused</div>
         <h2>ON HOLD</h2>
+        <p class="muted" style="margin:0 0 .4em;font-style:italic">♫ ${esc(HOLD_MUSIC[Math.floor(Math.random() * HOLD_MUSIC.length)])}</p>
         <button class="btn primary" data-act="resume"><span>RESUME</span></button>
         <button class="btn" data-act="retry">RETRY <kbd>R</kbd></button>
         <button class="btn" data-act="garage">LOAD &amp; BUILD</button>
@@ -164,7 +169,7 @@ export function controlsScreen(api: ScreenApi, back: () => void): HTMLElement {
   return root;
 }
 
-function resultLine(r: RunResult, reward: Reward, pick: (event: string) => string | null): string {
+function resultLine(r: RunResult, reward: Reward, pick: (event: string) => string | null, slowTime: number): string {
   if (!r.passed) {
     if (r.failReason === 'insufficient') return pick('failed_insufficient_cargo') ?? '';
     if (r.failReason === 'pool') return pick('failed_pool') ?? '';
@@ -175,11 +180,40 @@ function resultLine(r: RunResult, reward: Reward, pick: (event: string) => strin
     if (l) return l;
   }
   if (r.flamingo) return pick('passed_with_flamingo') ?? '';
+  if (r.time > slowTime) return pick('slow_pass') ?? '';
+  if (r.style >= 1200) return pick('stylish_pass') ?? '';
   if (r.delivered === 5) {
     if (r.stamps.allAccounted) return pick(r.route === 'safe' ? 'safe_route_clean_pass' : 'passed_all_five_clean') ?? '';
     return pick('passed_all_five_damaged') ?? '';
   }
   return pick(r.delivered === 4 ? 'passed_four' : 'passed_three') ?? '';
+}
+
+/** A fake customer review chosen from what actually happened. */
+export function pickReview(r: RunResult, course: CourseSpec): { stars: number; text: string } | null {
+  const conds: string[] = [];
+  if (r.failReason === 'pool') conds.push('pool');
+  else if (r.failReason && r.failReason !== 'insufficient') conds.push('crash');
+  else if (r.failReason === 'insufficient') conds.push('insufficient');
+  else {
+    if (r.flamingo) conds.push('flamingo');
+    if (r.stamps.allAccounted) conds.push('perfect');
+    if (r.flips > 0) conds.push('flips');
+    if (r.route === 'shortcut') conds.push('shortcut');
+    if (r.recovered) conds.push('recovered');
+    if (r.time > course.par.slow * 0.8) conds.push('slow');
+    if (r.delivered === 5 && !r.stamps.allAccounted) conds.push('damaged');
+    if (r.delivered === 4) conds.push('four');
+    if (r.delivered === 3) conds.push('three');
+  }
+  for (const c of conds) {
+    const pool = REVIEWS.filter((x) => x.when === c);
+    if (pool.length) {
+      const pick = pool[(r.attemptId.charCodeAt(r.attemptId.length - 2) + r.delivered) % pool.length];
+      return { stars: pick.stars, text: pick.text.replace('{dest}', course.destination) };
+    }
+  }
+  return null;
 }
 
 const SIGNERS = [
@@ -222,8 +256,9 @@ export function resultsScreen(
   const s = r.score;
   const stamp = (k: 'delivered' | 'allAccounted' | 'express', label: string) =>
     `<div class="stamp ${r.stamps[k] ? 'on' : ''} ${reward.newStamps.includes(k) ? 'new' : ''}">${label}</div>`;
-  const joke = resultLine(r, reward, pickLine);
+  const joke = resultLine(r, reward, pickLine, course.par.slow * 0.8);
   const ach = reward.newAchievements.map((a) => ACHIEVEMENTS[a]?.title).filter(Boolean);
+  const review = pickReview(r, course);
   const signer = r.passed ? SIGNERS[(r.attemptId.charCodeAt(r.attemptId.length - 1) + r.delivered) % SIGNERS.length] : '';
   const polaroid = extras.photo
     ? `<figure class="polaroid ${r.passed ? '' : 'fail'}"><div class="tape"></div><img src="${extras.photo.src}" alt="${esc(extras.photo.caption)}"><figcaption>${esc(extras.photo.caption)}</figcaption></figure>`
@@ -262,6 +297,7 @@ export function resultsScreen(
         ${ach.length ? `<div class="credit-line" style="margin-top:.4em;background:#f3c01c55"><span>Achievement</span><b>${esc(ach.join(', '))}</b></div>` : ''}
         ${tracking}
         ${signer ? `<div class="signed"><span>SIGNED FOR BY</span><b>${esc(signer)}</b></div>` : ''}
+        ${review ? `<div class="review"><div class="stars" aria-label="${review.stars} of 5 stars">${'★'.repeat(review.stars)}<i>${'★'.repeat(5 - review.stars)}</i></div><q>${esc(review.text)}</q><cite>— Verified Recipient</cite></div>` : ''}
         <div class="joke">${esc(joke)}</div>
         <div class="fineprint">Fictional Shop Credit. Game use only. ${r.assist ? '· Auto-balance assist on' : ''}</div>
       </div>
@@ -383,12 +419,19 @@ export function garageScreen(api: ScreenApi, onChange: () => void): HTMLElement 
         if (cost > 0 && !api.owns(key)) {
           if (!api.buy(key, cost)) {
             api.sfx('ui-back');
+            api.bark('broke');
             return;
           }
+          api.bark('purchase');
         }
         api.sfx('ui-select');
-        if (group === 'vehicle') api.setBuild({ vehicle: id as VehicleId });
-        else if (group === 'preset') api.setBuild({ preset: id as PresetId });
+        if (group === 'vehicle') {
+          if (api.save.build.vehicle !== id) api.bark('veh_' + id);
+          api.setBuild({ vehicle: id as VehicleId });
+        } else if (group === 'preset') {
+          if (api.save.build.preset !== id) api.bark('preset_' + id);
+          api.setBuild({ preset: id as PresetId });
+        }
         else if (group === 'suspension') api.setBuild({ suspension: id as Build['suspension'] });
         else if (group === 'tires') api.setBuild({ tires: id as Build['tires'] });
         else if (group === 'restraint') api.setBuild({ restraint: id as Build['restraint'] });

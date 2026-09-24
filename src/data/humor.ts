@@ -65,6 +65,30 @@ export const DISPATCH: Line[] = [
   { id: 'd52', event: 'retry_spam', text: 'Dispatch admires your commitment to the bit.' }, // +
   { id: 'd53', event: 'fragile_damaged', text: 'The fragile one. Of course it was the fragile one.' }, // +
   { id: 'd54', event: 'wheelie', text: 'Front wheel is taking a personal day.' }, // +
+  // Behaviour the game notices (all originals for this build).
+  { id: 'e01', event: 'idle', text: 'Dispatch here. Are we... parked? The customer can see you.' },
+  { id: 'e02', event: 'idle', text: 'Just checking you have not unionized.' },
+  { id: 'e03', event: 'idle', text: 'Standing still is technically the safest delivery method. It is also not a delivery.' },
+  { id: 'e04', event: 'reverse', text: 'Reverse is also a direction. Technically.' },
+  { id: 'e05', event: 'reverse', text: 'Going backwards. Bold logistics.' },
+  { id: 'e06', event: 'crawl', text: 'The customer asks if you are walking it there.' },
+  { id: 'e07', event: 'crawl', text: 'At this speed the parcels are legally a museum exhibit.' },
+  { id: 'e08', event: 'top_speed', text: 'That speed is not in the handbook. There is no handbook.' },
+  { id: 'e09', event: 'top_speed', text: 'Dispatch is legally required to say: please slow down. Dispatch has said it.' },
+  { id: 'e10', event: 'honk', text: 'Please stop honking at the parcels. They cannot move out of the way.' },
+  { id: 'e11', event: 'honk', text: 'Nobody is in front of you. That was for your own self-esteem.' },
+  { id: 'e12', event: 'early_loss', text: 'We have not even left the parking lot.' },
+  { id: 'e13', event: 'early_loss', text: 'New record. Unfortunately.' },
+  { id: 'e14', event: 'hard_landing', text: 'That landing was measured in vertebrae.' },
+  { id: 'e15', event: 'hard_landing', text: 'The boxes are fine. The boxes are always fine. Until they are not.' },
+  { id: 'e16', event: 'rumble', text: 'The boxes would like to file a noise complaint.' },
+  { id: 'e17', event: 'dig_site', text: 'Please do not deliver to the dig site. It has enough going on.' },
+  { id: 'e18', event: 'awning_hit', text: 'The awning has been informed of your stack height.' },
+  { id: 'e19', event: 'awning_hit', text: 'Low clearance. It was on the sign. The sign was also low.' },
+  { id: 'e20', event: 'last_parcel', text: 'One parcel left. Protect it like it knows things.' },
+  { id: 'e21', event: 'stunt_combo', text: 'Style points are not redeemable for parcels. We checked.' },
+  { id: 'e22', event: 'recovered_again', text: 'Same box, second pickup. It is starting to feel like a relationship.' },
+  { id: 'e23', event: 'near_bay_fast', text: 'The bay is the stopping part. Just a thought.' },
   // Course flavour.
   { id: 'p01', event: 'run_started', text: 'Pier Pressure. Mind the gulls. They are unionized.', course: 'pier' }, // +
   { id: 'p02', event: 'shortcut_taken', text: 'You are now on the snack stand roof. The snack stand has not been informed.', course: 'pier' }, // +
@@ -92,6 +116,13 @@ export const RESULTS: Line[] = [
   { id: 'r15', event: 'failed_pool', text: 'Signed for by: the deep end.' }, // +
   { id: 'r16', event: 'failed_crash', text: 'Delivery status: pending an explanation.' }, // +
   { id: 'r17', event: 'failed_crash', text: 'Recipient was not home. Neither, briefly, was the vehicle.' }, // +
+  { id: 'r18', event: 'slow_pass', text: 'Delivered. Eventually. The customer has aged.' }, // +
+  { id: 'r19', event: 'slow_pass', text: 'Right on time, for a different day.' }, // +
+  { id: 'r20', event: 'stylish_pass', text: 'Lovely stunts. The boxes are in therapy.' }, // +
+  { id: 'r21', event: 'failed_crash', text: 'The vehicle has been delivered to a new orientation.' }, // +
+  { id: 'r22', event: 'failed_pool', text: 'Package status: damp. Driver status: also damp.' }, // +
+  { id: 'r23', event: 'passed_four', text: 'Four out of five. The fifth is on a journey of self discovery.' }, // +
+  { id: 'r24', event: 'failed_insufficient_cargo', text: 'You delivered the vehicle beautifully. The vehicle was not the order.' }, // +
 ];
 
 export const RESULT_VERDICTS = {
@@ -108,6 +139,55 @@ export const BARKS: Line[] = [
   { id: 'b04', event: 'delivered_stop', text: 'Package received. Receipt printing. Nobody look at the receipt.' },
   { id: 'b05', event: 'impossible', text: 'Dispatch update: not enough boxes left to pass. You may continue for practice. And for sport.' },
   { id: 'b06', event: 'garage', text: 'Welcome to the loading dock. Please choose your mistakes carefully.' },
+  { id: 'b07', event: 'veh_slingshot', text: 'The Slingshot. Two seats. One questionable business model.' },
+  { id: 'b08', event: 'veh_ryker', text: 'The Ryker. Small shipment. Large incident report.' },
+  { id: 'b09', event: 'veh_spyder', text: 'The Spyder. The responsible option. It has also found the ramp.' },
+  { id: 'b10', event: 'preset_sensible', text: 'Low and sensible. Dispatch approves. Dispatch is bored, but approves.' },
+  { id: 'b11', event: 'preset_regret', text: 'Express Regret. Bold. Wrong, but bold.' },
+  { id: 'b12', event: 'preset_secure', text: 'Looks secure. It does look secure. That is the problem.' },
+  { id: 'b13', event: 'purchase', text: 'Money well spent. Fictional money, but still.' },
+  { id: 'b14', event: 'purchase', text: 'Receipt filed under: probably fine.' },
+  { id: 'b15', event: 'welcome_back', text: 'Welcome back. The parcels remember you.' },
+  { id: 'b16', event: 'broke', text: 'Insufficient Shop Credit. Try delivering things. It helps.' },
+];
+
+/** Rotating quips for the pause screen and loading screen (text only). */
+export const HOLD_MUSIC = [
+  'Your delivery is important to us. Please remain airborne.',
+  'You are caller number four in the queue. The parcels are caller number one.',
+  'Paused. The boxes are using this time to reflect.',
+  'While you wait: the flamingo is not a required parcel. It knows.',
+  'Fun fact: none of these straps were inspected.',
+  'Hold music is currently being delivered. Probably.',
+];
+
+export const LOADING_QUIPS = [
+  'Consulting the insurance guy…',
+  'Loosening straps for realism…',
+  'Teaching the flamingo to brace…',
+  'Measuring the shortcut emotionally…',
+  'Hiding the incident log…',
+  'Inflating the tires and expectations…',
+];
+
+// Fake customer reviews on the receipt, chosen from what actually happened.
+// {dest} is replaced with the destination name.
+export const REVIEWS: { when: string; stars: number; text: string }[] = [
+  { when: 'pool', stars: 1, text: 'My package arrived in the pool. I ordered it to the lobby. The pool is not the lobby.' },
+  { when: 'pool', stars: 2, text: 'Driver waved at me from the deep end. Friendly. Wet. Mostly friendly.' },
+  { when: 'crash', stars: 1, text: 'I watched the delivery vehicle perform a hobby instead of a delivery.' },
+  { when: 'crash', stars: 2, text: 'Delivery person stopped to inspect the pavement. Closely. With their face.' },
+  { when: 'insufficient', stars: 1, text: 'Two boxes arrived. The others, per tracking, “left to pursue other opportunities.”' },
+  { when: 'perfect', stars: 5, text: 'Everything arrived square. I am suspicious. Five stars anyway.' },
+  { when: 'perfect', stars: 5, text: 'Flawless. I have never been more disappointed to have nothing to complain about.' },
+  { when: 'damaged', stars: 3, text: 'All my parcels are here. Some of them are now a different shape. Art, maybe.' },
+  { when: 'four', stars: 4, text: 'Four boxes. The fifth one sent a postcard.' },
+  { when: 'three', stars: 3, text: 'Three out of five. The driver said “that’s a majority” and left.' },
+  { when: 'flamingo', stars: 5, text: 'I did not order a flamingo. I now have a flamingo. My life is better. Five stars.' },
+  { when: 'shortcut', stars: 4, text: 'Saw the driver on the roof of {dest}. I have questions. Package was on time though.' },
+  { when: 'slow', stars: 3, text: 'Arrived so slowly I thought it was a parade. It was not a parade.' },
+  { when: 'flips', stars: 4, text: 'The truck did a flip in front of my kids. They want to be couriers now. Thanks a lot.' },
+  { when: 'recovered', stars: 4, text: 'Watched the driver reverse to pick up my box off the road. Very caring. Very weird.' },
 ];
 
 export const SIGNS = {

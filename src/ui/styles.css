@@ -865,6 +865,36 @@ kbd {
   transform: rotate(-2deg);
   color: #2340a0;
 }
+.review {
+  margin-top: 0.7em;
+  background: #fff6c9;
+  padding: 0.5em 0.7em;
+  border-radius: 0.3em;
+  transform: rotate(-0.6deg);
+}
+.review .stars {
+  color: #e8a400;
+  letter-spacing: 0.1em;
+  font-size: 1.1em;
+}
+.review .stars i {
+  color: #d9d2bd;
+  font-style: normal;
+}
+.review q {
+  display: block;
+  font-style: italic;
+  font-size: 0.95em;
+  line-height: 1.2;
+  color: #333;
+  margin: 0.15em 0;
+}
+.review cite {
+  font-size: 0.72em;
+  color: #777;
+  font-style: normal;
+  letter-spacing: 0.08em;
+}
 .replay {
   position: absolute;
   inset: 0;
