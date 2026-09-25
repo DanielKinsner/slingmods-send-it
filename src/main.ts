@@ -848,7 +848,7 @@ class Game {
       case 'impact': {
         const s = c.strength ?? 3;
         if (c.kind === 'flamingo') {
-          A.play((['squeak-1', 'squeak-2', 'squeak-3'] as const)[Math.floor(Math.random() * 3)], { vol: Math.min(0.8, s / 8), minGap: 0.5, pan });
+          A.play((['squeak-1', 'squeak-2', 'squeak-3'] as const)[Math.floor(Math.random() * 3)], { vol: 0.7 * Math.min(0.8, s / 8), minGap: 0.5, pan });
           if (s > 4.5 && !this.runFlags.has('flamingo-concern')) {
             this.runFlags.add('flamingo-concern');
             this.line('flamingo_hard_impact');
