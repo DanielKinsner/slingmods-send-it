@@ -796,7 +796,7 @@ class Game {
         A.play('bell', { vol: 0.8, jitter: 0 });
         this.photoWant = 'bay';
         this.track('Arrived at receiving bay');
-        A.play('tire-chirp', { vol: 0.3 });
+        A.play('tire-chirp', { vol: 0.21 });
         break;
       case 'finished':
         this.resultDelay = 0.4;
@@ -952,7 +952,7 @@ class Game {
     // Tire chirp on hard braking.
     this.chirpCooldown -= 1 / 60;
     if (this.lastInput.brake > 0.8 && v.forwardSpeed > 9 && !v.airborne && this.chirpCooldown <= 0) {
-      this.audio.play('tire-chirp', { vol: 0.45 });
+      this.audio.play('tire-chirp', { vol: 0.315 });
       this.chirpCooldown = 1.5;
       this.scene.particles.emit(4, { x: v.position.x - 1.2, y: v.position.y - 0.5, color: '#bbbbbb', speed: 1, life: 0.6, size: 0.6, grow: 2, alpha: 0.35 });
     }
